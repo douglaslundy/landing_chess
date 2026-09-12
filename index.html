@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xadrez Essencial | Douglas Lundy</title>
+  <meta name="description" content="Livro completo de xadrez em 10 volumes: 619 páginas, 300 diagramas, 229 exercícios práticos com tabuleiro e 229 gabaritos visuais." />
+  <meta name="theme-color" content="#0a0a0c" />
+  <meta property="og:title" content="Xadrez Essencial" />
+  <meta property="og:description" content="10 volumes, 619 páginas, 300 diagramas e 229 exercícios com soluções visuais no tabuleiro." />
+  <meta property="og:type" content="product" />
+  <meta property="og:image" content="assets/capa-xadrez-essencial.png" />
+  <style>
+    :root {
+      --bg: #08080a;
+      --bg-2: #101014;
+      --card: #141419;
+      --card-2: #19191f;
+      --line: rgba(255,255,255,.1);
+      --text: #f4f1eb;
+      --muted: #b8b4ad;
+      --red: #d10e17;
+      --red-2: #ff2a2f;
+      --red-dark: #75060b;
+      --gold: #d8b66c;
+      --white: #fff;
+      --shadow: 0 24px 70px rgba(0,0,0,.42);
+      --radius: 22px;
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 80% 8%, rgba(209,14,23,.18), transparent 28%),
+        radial-gradient(circle at 10% 35%, rgba(209,14,23,.08), transparent 24%),
+        linear-gradient(180deg, #08080a 0%, #0d0d11 45%, #08080a 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 74%);
+    }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    .container { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #ffd8d8;
+      font-weight: 800;
+      font-size: .78rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,42,47,.32);
+      background: rgba(209,14,23,.1);
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+    .eyebrow::before { content: "◆"; color: var(--red-2); font-size: .72rem; }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(8,8,10,.78);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 900; letter-spacing: .04em; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--red-2), var(--red-dark));
+      box-shadow: 0 8px 26px rgba(209,14,23,.34);
+      font-size: 1.25rem;
+    }
+    .brand small { display: block; color: var(--muted); font-size: .67rem; letter-spacing: .12em; font-weight: 700; text-transform: uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a:not(.btn) { color: var(--muted); text-decoration: none; font-weight: 700; font-size: .9rem; }
+    .nav-links a:hover { color: var(--white); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--red-2), #a70810);
+      box-shadow: 0 14px 34px rgba(209,14,23,.28);
+    }
+    .btn-primary:hover { box-shadow: 0 18px 42px rgba(209,14,23,.38); }
+    .btn-ghost { color: var(--text); border: 1px solid var(--line); background: rgba(255,255,255,.035); }
+    .hero { padding: 72px 0 76px; position: relative; }
+    .hero::after {
+      content: ""; position: absolute; right: -12%; top: 4%; width: 44vw; height: 44vw;
+      border: 1px solid rgba(209,14,23,.12); transform: rotate(34deg); pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 70px; align-items: center; }
+    h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(3rem, 6vw, 5.7rem); line-height: .98; letter-spacing: -.045em; margin: 22px 0 22px; }
+    h1 .red { color: var(--red-2); }
+    .hero-copy > p { color: var(--muted); font-size: clamp(1.05rem, 1.6vw, 1.28rem); max-width: 700px; margin: 0 0 28px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 28px; }
+    .microcopy { color: #d7d2ca; font-size: .88rem; display: flex; flex-wrap: wrap; gap: 14px; }
+    .microcopy span::before { content: "✓"; color: var(--red-2); font-weight: 900; margin-right: 7px; }
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 34px; }
+    .stat { padding: 16px 12px; border: 1px solid var(--line); background: rgba(255,255,255,.028); border-radius: 14px; }
+    .stat strong { display: block; font-size: 1.35rem; color: #fff; }
+    .stat span { color: var(--muted); font-size: .78rem; }
+    .book-stage { position: relative; min-height: 620px; display: grid; place-items: center; }
+    .book-glow { position: absolute; width: 80%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(209,14,23,.34), transparent 68%); filter: blur(16px); }
+    .book { width: min(390px, 82vw); position: relative; z-index: 2; transform: perspective(1100px) rotateY(-9deg) rotateX(1deg); filter: drop-shadow(0 34px 40px rgba(0,0,0,.58)); }
+    .book::before { content: ""; position: absolute; left: -13px; top: 12px; bottom: 10px; width: 16px; background: linear-gradient(90deg,#340408,#7a0a0f); transform: skewY(-36deg); border-radius: 5px 0 0 5px; }
+    .book img { border-radius: 8px; border: 1px solid rgba(255,255,255,.16); }
+    .floating-badge {
+      position: absolute; z-index: 3; right: 2%; bottom: 8%;
+      width: 150px; aspect-ratio: 1; border-radius: 50%;
+      display: grid; place-items: center; text-align: center;
+      background: #f5efe3; color: #141414; border: 7px double #a30b11;
+      font-weight: 950; line-height: 1.15; transform: rotate(-7deg);
+      box-shadow: var(--shadow);
+    }
+    .floating-badge strong { display:block; font-size: 1.45rem; color: #a30b11; }
+    .trust-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.022); }
+    .trust-inner { padding: 20px 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 34px; color: var(--muted); font-size: .9rem; font-weight: 750; }
+    .trust-inner span::before { content: "♟"; color: var(--red-2); margin-right: 8px; }
+    section { padding: 92px 0; }
+    .section-head { max-width: 760px; margin-bottom: 42px; }
+    .section-head h2 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 4.3vw, 4rem); line-height: 1.05; letter-spacing: -.035em; margin: 16px 0 16px; }
+    .section-head p { color: var(--muted); font-size: 1.08rem; margin: 0; }
+    .benefits { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .benefit {
+      padding: 26px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.042), rgba(255,255,255,.018));
+      min-height: 220px;
+    }
+    .icon { width: 48px; height: 48px; display:grid; place-items:center; border-radius: 13px; background: rgba(209,14,23,.14); color: var(--red-2); font-size: 1.35rem; margin-bottom: 18px; }
+    .benefit h3 { margin: 0 0 10px; font-size: 1.12rem; }
+    .benefit p { margin: 0; color: var(--muted); font-size: .94rem; }
+    .modules-wrap { background: linear-gradient(180deg, rgba(255,255,255,.02), transparent); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .modules { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .module {
+      position: relative; display: grid; grid-template-columns: 58px 1fr; gap: 16px; align-items: start;
+      padding: 22px; border-radius: 16px; border: 1px solid var(--line); background: rgba(8,8,10,.65);
+    }
+    .module-num { font-family: Georgia,serif; font-size: 1.55rem; color: var(--red-2); font-weight: 800; }
+    .module h3 { margin: 1px 0 5px; font-size: 1.05rem; }
+    .module p { margin: 0; color: var(--muted); font-size: .89rem; }
+    .bonus-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+    .bonus-card { overflow: hidden; border-radius: var(--radius); border: 1px solid var(--line); background: var(--card); box-shadow: var(--shadow); }
+    .bonus-visual { min-height: 260px; padding: 28px; display: grid; place-items: center; background: radial-gradient(circle at 50% 30%, rgba(209,14,23,.25), transparent 57%), #0c0c0f; }
+    .bonus-visual img { max-height: 220px; border-radius: 9px; box-shadow: 0 20px 42px rgba(0,0,0,.48); }
+    .bonus-body { padding: 26px; }
+    .bonus-label { color: var(--red-2); font-weight: 900; text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; }
+    .bonus-body h3 { font-size: 1.45rem; margin: 8px 0 10px; }
+    .bonus-body p { color: var(--muted); margin: 0; }
+    .included { display: grid; grid-template-columns: .9fr 1.1fr; gap: 52px; align-items: center; }
+    .stack { position: relative; min-height: 450px; }
+    .stack-card { position: absolute; left: 50%; top: 50%; width: 270px; height: 370px; border-radius: 18px; border: 1px solid rgba(255,255,255,.14); box-shadow: var(--shadow); padding: 28px; display: flex; flex-direction: column; justify-content: space-between; }
+    .stack-card:nth-child(1) { transform: translate(-65%,-52%) rotate(-8deg); background: linear-gradient(145deg,#5a070b,#121216 65%); }
+    .stack-card:nth-child(2) { transform: translate(-40%,-48%) rotate(7deg); background: linear-gradient(145deg,#19191f,#08080a); }
+    .stack-card:nth-child(3) { transform: translate(-52%,-48%); background: linear-gradient(145deg,#a20910,#17171b 55%); }
+    .stack-card b { font-family: Georgia,serif; font-size: 2rem; line-height: 1.05; }
+    .stack-card span { color: #f7d6d6; font-size: .85rem; }
+    .checklist { display: grid; gap: 12px; }
+    .check { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; padding: 16px; border-bottom: 1px solid var(--line); }
+    .check i { width: 28px; height: 28px; border-radius: 50%; background: rgba(209,14,23,.14); color: var(--red-2); font-style: normal; display:grid; place-items:center; font-weight: 900; }
+    .check b { display:block; margin-bottom: 3px; }
+    .check small { color: var(--muted); font-size: .88rem; }
+    .audience { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+    .audience-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 30px; background: rgba(255,255,255,.025); }
+    .audience-card h3 { margin: 0 0 18px; font-size: 1.35rem; }
+    .audience-card ul { list-style: none; margin:0; padding:0; display:grid; gap:12px; color: var(--muted); }
+    .audience-card li::before { content: "✓"; color: var(--red-2); font-weight: 900; margin-right: 10px; }
+    .offer { padding-top: 45px; }
+    .offer-box {
+      position: relative; overflow: hidden; border-radius: 30px; padding: 56px;
+      border: 1px solid rgba(255,42,47,.32);
+      background:
+        linear-gradient(120deg, rgba(209,14,23,.22), transparent 45%),
+        linear-gradient(180deg, #17171c, #0b0b0e);
+      box-shadow: var(--shadow);
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 50px; align-items: center;
+    }
+    .offer-box::after { content:"♞"; position:absolute; right:-30px; bottom:-130px; font-size: 380px; color: rgba(255,255,255,.025); transform: rotate(-10deg); }
+    .offer-copy, .price-card { position: relative; z-index: 2; }
+    .offer-copy h2 { font-family: Georgia,serif; font-size: clamp(2.35rem,4vw,4rem); line-height:1.04; margin:14px 0; }
+    .offer-copy p { color: var(--muted); }
+    .price-card { background: #f5f0e7; color: #121214; border-radius: 22px; padding: 30px; box-shadow: 0 24px 58px rgba(0,0,0,.38); }
+    .price-kicker { font-size:.77rem; text-transform:uppercase; letter-spacing:.12em; font-weight:900; color:#8f090f; }
+    .price { display:flex; align-items:flex-start; gap:4px; margin: 8px 0 4px; }
+    .price .currency { font-weight:900; font-size:1.25rem; padding-top:12px; }
+    .price .major { font-family: Georgia,serif; font-weight:900; font-size:4.7rem; line-height:.95; letter-spacing:-.06em; }
+    .price .cents { font-weight:900; font-size:1.5rem; padding-top:8px; }
+    .price-note { color:#5d5852; font-size:.88rem; margin-bottom:20px; }
+    .price-card .btn { width:100%; min-height:58px; font-size:1.03rem; }
+    .price-card ul { list-style:none; padding:0; margin:20px 0 0; display:grid; gap:9px; font-size:.9rem; color:#4d4944; }
+    .price-card li::before { content:"✓"; color:#a20910; font-weight:900; margin-right:8px; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .step { padding:25px; border:1px solid var(--line); border-radius:18px; background:rgba(255,255,255,.025); }
+    .step strong { width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:var(--red); margin-bottom:16px; }
+    .step h3 { margin:0 0 7px; }
+    .step p { color:var(--muted); margin:0; font-size:.92rem; }
+    .faq { max-width:860px; }
+    .faq-item { border-bottom:1px solid var(--line); }
+    .faq-q { width:100%; color:var(--text); background:transparent; border:0; padding:22px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; text-align:left; font:inherit; font-weight:850; cursor:pointer; }
+    .faq-q span:last-child { color:var(--red-2); font-size:1.5rem; transition:transform .2s; }
+    .faq-a { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+    .faq-a p { color:var(--muted); margin:0; padding:0 0 22px; }
+    .faq-item.open .faq-a { max-height:240px; }
+    .faq-item.open .faq-q span:last-child { transform:rotate(45deg); }
+    footer { border-top:1px solid var(--line); padding:38px 0 90px; color:var(--muted); font-size:.85rem; }
+    .footer-grid { display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; }
+    .footer-grid strong { color:var(--text); }
+    .mobile-cta { display:none; position:fixed; z-index:50; left:12px; right:12px; bottom:12px; background:rgba(12,12,15,.92); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:16px; padding:10px; box-shadow:0 15px 50px rgba(0,0,0,.55); align-items:center; justify-content:space-between; gap:10px; }
+    .mobile-cta b { font-size:.9rem; }
+    .mobile-cta small { display:block; color:var(--muted); }
+    .mobile-cta .btn { min-height:44px; padding:0 14px; font-size:.86rem; }
+    .notice { margin-top:14px; color:#716b64; font-size:.74rem; line-height:1.45; }
+    @media (max-width: 960px) {
+      .nav-links a:not(.btn) { display:none; }
+      .hero-grid, .included, .offer-box { grid-template-columns:1fr; }
+      .hero { padding-top:48px; }
+      .book-stage { min-height:560px; }
+      .benefits { grid-template-columns:repeat(2,1fr); }
+      .offer-box { padding:40px; }
+    }
+    @media (max-width: 680px) {
+      .container { width:min(var(--max), calc(100% - 24px)); }
+      .nav-inner { height:64px; }
+      .nav .btn { display:none; }
+      .brand { font-size:.9rem; }
+      .hero { padding:42px 0 54px; }
+      h1 { font-size:3.15rem; }
+      .hero-actions { flex-direction:column; }
+      .hero-actions .btn { width:100%; }
+      .stats { grid-template-columns:repeat(2,1fr); }
+      .book-stage { min-height:480px; }
+      .book { width:min(300px,78vw); }
+      .floating-badge { width:118px; right:-2%; bottom:5%; font-size:.78rem; }
+      .floating-badge strong { font-size:1.1rem; }
+      section { padding:66px 0; }
+      .benefits, .modules, .bonus-grid, .audience, .steps { grid-template-columns:1fr; }
+      .included { gap:26px; }
+      .stack { min-height:390px; }
+      .stack-card { width:220px; height:310px; }
+      .offer-box { padding:28px 20px; border-radius:22px; }
+      .price .major { font-size:4rem; }
+      .mobile-cta { display:flex; }
+      footer { padding-bottom:110px; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Xadrez Essencial",
+    "description": "Livro digital com 10 volumes, 619 páginas, 300 diagramas, 229 exercícios práticos com tabuleiro e 229 gabaritos visuais.",
+    "brand": {"@type":"Brand","name":"Douglas Lundy"},
+    "author": {"@type":"Person","name":"Douglas Lundy"},
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "BRL",
+      "price": "39.90",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#inicio" aria-label="Xadrez Essencial">
+        <span class="brand-mark">♞</span>
+        <span>XADREZ ESSENCIAL<small>Do fundamento ao jogo competitivo</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="#conteudo">Conteúdo</a>
+        <a href="#exercicios">Exercícios</a>
+        <a href="#faq">Dúvidas</a>
+        <a class="btn btn-primary checkout-link" href="https://SEU-CHECKOUT-AQUI">Quero começar</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Livro completo • 10 volumes</span>
+          <h1>Domine o xadrez com um método <span class="red">claro, visual e progressivo.</span></h1>
+          <p>Do primeiro movimento à preparação para torneios: uma obra completa para aprender fundamentos, calcular melhor, reconhecer padrões e transformar estudo em evolução prática.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary checkout-link" href="https://SEU-CHECKOUT-AQUI">Quero o curso por R$ 39,90 →</a>
+            <a class="btn btn-ghost" href="#conteudo">Ver tudo o que está incluído</a>
+          </div>
+          <div class="microcopy">
+            <span>PDF completo e pesquisável</span>
+            <span>Exercícios e gabaritos no tabuleiro</span>
+            <span>Leitura no celular, tablet ou computador</span>
+          </div>
+          <div class="stats" aria-label="Números da coleção">
+            <div class="stat"><strong>619</strong><span>páginas</span></div>
+            <div class="stat"><strong>300</strong><span>diagramas</span></div>
+            <div class="stat"><strong>229</strong><span>exercícios práticos</span></div>
+            <div class="stat"><strong>229</strong><span>gabaritos visuais</span></div>
+          </div>
+        </div>
+        <div class="book-stage" aria-label="Capa do livro Xadrez Essencial">
+          <div class="book-glow"></div>
+          <div class="book"><img src="assets/capa-xadrez-essencial.png" alt="Capa do livro Xadrez Essencial, de Douglas Lundy" /></div>
+          <div class="floating-badge">PREÇO DE<br><strong>LANÇAMENTO</strong>R$ 39,90</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust-strip">
+      <div class="container trust-inner">
+        <span>Conteúdo do iniciante ao competitivo</span>
+        <span>Progressão organizada por competências</span>
+        <span>Autor: Douglas Lundy</span>
+      </div>
+    </div>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Aprendizado estruturado</span>
+          <h2>Não é apenas um livro. É um plano completo de estudo.</h2>
+          <p>Cada volume combina explicação, visualização e aplicação prática. Ao final, uma seção específica reúne exercícios e gabaritos resolvidos diretamente no tabuleiro.</p>
+        </div>
+        <div class="benefits">
+          <article class="benefit"><div class="icon">♟</div><h3>Fundamentos sem lacunas</h3><p>Regras, princípios, notação, segurança do rei, desenvolvimento e conceitos essenciais apresentados em ordem lógica.</p></article>
+          <article class="benefit"><div class="icon">⌁</div><h3>Treino visual</h3><p>Os 300 diagramas ajudam a construir reconhecimento de padrões, leitura do tabuleiro e memória posicional.</p></article>
+          <article class="benefit"><div class="icon">⚔</div><h3>Tática e estratégia integradas</h3><p>Você aprende a calcular golpes imediatos e também a criar planos de longo prazo com base na estrutura.</p></article>
+          <article class="benefit"><div class="icon">✓</div><h3>229 exercícios de tabuleiro</h3><p>Cada exercício apresenta uma posição para reprodução e análise, sem perguntas abertas ou respostas meramente conceituais.</p></article>
+          <article class="benefit"><div class="icon">♜</div><h3>Abertura, meio-jogo e final</h3><p>As fases da partida são conectadas para que você entenda transições, planos típicos e técnicas de conversão.</p></article>
+          <article class="benefit"><div class="icon">◎</div><h3>Gabarito realmente visual</h3><p>As 229 respostas incluem tabuleiro, setas, casas críticas, notação dos movimentos e explicação do tema técnico.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="modules-wrap" id="conteudo">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Conteúdo da coleção</span>
+          <h2>Uma jornada completa em 10 volumes.</h2>
+          <p>Comece no seu nível atual e avance com uma sequência que cobre técnica, pensamento, prática e preparação competitiva.</p>
+        </div>
+        <div class="modules">
+          <article class="module"><div class="module-num">01</div><div><h3>Fundamentos absolutos</h3><p>Regras, notação, princípios de jogo, tática elementar, finais básicos e partida comentada.</p></div></article>
+          <article class="module"><div class="module-num">02</div><div><h3>Pensamento, cálculo e decisão</h3><p>Lances candidatos, visualização, avaliação, profilaxia, tempo e método de decisão.</p></div></article>
+          <article class="module"><div class="module-num">03</div><div><h3>Tática sistemática</h3><p>Ataques duplos, cravadas, desvios, interferência, padrões de mate e sacrifícios.</p></div></article>
+          <article class="module"><div class="module-num">04</div><div><h3>Estratégia e estruturas de peões</h3><p>Centros, peões isolados, Carlsbad, colunas, casas fracas e trocas estratégicas.</p></div></article>
+          <article class="module"><div class="module-num">05</div><div><h3>Finais essenciais</h3><p>Oposição, peões passados, finais de torres, Lucena, Philidor, peças menores e damas.</p></div></article>
+          <article class="module"><div class="module-num">06</div><div><h3>Aberturas por estruturas e planos</h3><p>Italiana, Ruy Lopez, Siciliana, Francesa, Caro-Kann, Gambito da Dama, Índias e Inglesa.</p></div></article>
+          <article class="module"><div class="module-num">07</div><div><h3>Ataque ao rei e defesa</h3><p>Condições do ataque, roques opostos, sacrifícios, abertura de linhas e defesa ativa.</p></div></article>
+          <article class="module"><div class="module-num">08</div><div><h3>Jogo prático e análise</h3><p>Preparação, relógio, momentos críticos, resiliência, conversão e análise com ou sem motor.</p></div></article>
+          <article class="module"><div class="module-num">09</div><div><h3>Treinamento competitivo</h3><p>Periodização, psicologia prática, preparação de adversários, logística e estratégia de torneio.</p></div></article>
+          <article class="module"><div class="module-num">10</div><div><h3>Currículo e avaliações</h3><p>Trilhas de progressão, partidas-modelo, avaliações graduadas, rubricas e plano anual.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="exercicios">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Prática aplicada</span>
+          <h2>O exercício começa no tabuleiro e termina com uma solução visual.</h2>
+          <p>As questões conceituais abertas foram removidas. Permaneceram somente exercícios vinculados a posições concretas, acompanhados do respectivo gabarito ilustrado.</p>
+        </div>
+        <div class="bonus-grid">
+          <article class="bonus-card">
+            <div class="bonus-visual"><img src="assets/exercicio-tabuleiro.png" alt="Exemplo de exercício prático com posição de xadrez no tabuleiro" /></div>
+            <div class="bonus-body"><span class="bonus-label">Exercício prático</span><h3>Posição limpa para resolver</h3><p>Reproduza a posição e encontre no tabuleiro o lance, a rota ou a continuação temática solicitada.</p></div>
+          </article>
+          <article class="bonus-card">
+            <div class="bonus-visual"><img src="assets/gabarito-visual.png" alt="Exemplo de gabarito solucionado visualmente no tabuleiro" /></div>
+            <div class="bonus-body"><span class="bonus-label">Gabarito visual</span><h3>Solução demonstrada no tabuleiro</h3><p>Confira setas, casas destacadas, notação dos movimentos e uma explicação objetiva do tema técnico da posição.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container included">
+        <div class="stack" aria-hidden="true">
+          <div class="stack-card"><span>GABARITO VISUAL</span><b>229 SOLUÇÕES</b><span>Setas, casas e notação</span></div>
+          <div class="stack-card"><span>TREINO PRÁTICO</span><b>229 EXERCÍCIOS</b><span>Todos com tabuleiro</span></div>
+          <div class="stack-card"><span>LIVRO COMPLETO</span><b>XADREZ ESSENCIAL</b><span>Volumes 1 a 10</span></div>
+        </div>
+        <div>
+          <div class="section-head">
+            <span class="eyebrow">O que você recebe</span>
+            <h2>Conteúdo completo em um único PDF.</h2>
+          </div>
+          <div class="checklist">
+            <div class="check"><i>✓</i><div><b>Livro completo com 10 volumes</b><small>619 páginas organizadas do nível básico ao competitivo.</small></div></div>
+            <div class="check"><i>✓</i><div><b>300 diagramas</b><small>Posições para visualização, análise e reconhecimento de padrões.</small></div></div>
+            <div class="check"><i>✓</i><div><b>229 exercícios com tabuleiro</b><small>Posições concretas para treino de cálculo, estratégia, finais e jogo prático.</small></div></div>
+            <div class="check"><i>✓</i><div><b>229 gabaritos visuais</b><small>Soluções demonstradas com tabuleiro anotado, movimentos e tema técnico.</small></div></div>
+            <div class="check"><i>✓</i><div><b>Formato digital pesquisável</b><small>Compatível com celular, tablet, computador e leitores de PDF.</small></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Para quem foi criado</span><h2>Estude no seu ritmo, sem depender de conhecimento prévio.</h2></div>
+        <div class="audience">
+          <div class="audience-card"><h3>Ideal para</h3><ul><li>Iniciantes que querem uma base segura e organizada</li><li>Jogadores intermediários que estudam sem direção</li><li>Competidores que precisam revisar pontos fracos</li><li>Professores e clubes que buscam material estruturado</li><li>Pais e responsáveis que desejam apoiar o aprendizado</li></ul></div>
+          <div class="audience-card"><h3>Você vai aproveitar melhor se</h3><ul><li>Resolver os exercícios antes de consultar as respostas</li><li>Reproduzir as posições em um tabuleiro físico ou digital</li><li>Manter um registro dos erros recorrentes</li><li>Revisar os volumes em ciclos de estudo</li><li>Aplicar os conceitos em partidas reais</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="offer" id="oferta">
+      <div class="container">
+        <div class="offer-box">
+          <div class="offer-copy">
+            <span class="eyebrow">Preço de lançamento sugerido</span>
+            <h2>Comece hoje por menos de R$ 4 por volume.</h2>
+            <p>Uma oferta acessível para o livro completo, com exercícios e gabaritos visuais incluídos. Sem mensalidade.</p>
+            <div class="microcopy"><span>10 volumes</span><span>619 páginas</span><span>229 exercícios</span></div>
+          </div>
+          <div class="price-card">
+            <div class="price-kicker">Pagamento único sugerido</div>
+            <div class="price"><span class="currency">R$</span><span class="major">39</span><span class="cents">,90</span></div>
+            <div class="price-note">Equivale a R$ 3,99 por volume, em pagamento único.</div>
+            <a class="btn btn-primary checkout-link" href="https://SEU-CHECKOUT-AQUI">Quero acessar o Xadrez Essencial</a>
+            <ul><li>Produto digital em PDF</li><li>Liberação conforme o processamento do checkout</li><li>Leia em qualquer dispositivo compatível com PDF</li></ul>
+            <p class="notice">Configure nesta página apenas condições comerciais reais. Caso ofereça garantia, parcelamento ou prazo promocional, informe-os de acordo com a plataforma de pagamento e a legislação aplicável.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Como funciona</span><h2>Três passos para começar.</h2></div>
+        <div class="steps">
+          <div class="step"><strong>1</strong><h3>Finalize a compra</h3><p>Clique no botão e conclua o pagamento na plataforma de checkout configurada.</p></div>
+          <div class="step"><strong>2</strong><h3>Receba os arquivos</h3><p>A entrega digital é realizada de acordo com o fluxo definido na plataforma escolhida.</p></div>
+          <div class="step"><strong>3</strong><h3>Siga a trilha</h3><p>Comece pelo volume adequado ao seu nível e use os exercícios no tabuleiro para medir o progresso.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="container faq">
+        <div class="section-head"><span class="eyebrow">Perguntas frequentes</span><h2>Dúvidas antes de começar.</h2></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>O material serve para quem nunca jogou?</span><span>+</span></button><div class="faq-a"><p>Sim. O primeiro volume apresenta regras, movimentos, notação e princípios fundamentais. A progressão avança gradualmente até conteúdos competitivos.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Os exercícios possuem respostas?</span><span>+</span></button><div class="faq-a"><p>Sim. O livro reúne 229 exercícios práticos e 229 gabaritos. Cada resposta apresenta a posição no tabuleiro com indicações visuais e notação dos movimentos.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Preciso imprimir o livro?</span><span>+</span></button><div class="faq-a"><p>Não. Os arquivos podem ser lidos digitalmente em dispositivos compatíveis com PDF. A impressão é opcional e depende das condições de uso definidas pelo vendedor.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Como funciona o gabarito visual?</span><span>+</span></button><div class="faq-a"><p>Cada gabarito reproduz a posição e indica no tabuleiro os movimentos ou rotas da solução, as casas críticas e o tema técnico correspondente.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>Como receberei o material?</span><span>+</span></button><div class="faq-a"><p>A forma de entrega depende da plataforma conectada ao botão de compra. Configure o checkout para liberar ou enviar os arquivos após a confirmação do pagamento.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false"><span>O preço de R$ 39,90 é definitivo?</span><span>+</span></button><div class="faq-a"><p>É o preço de lançamento sugerido. Você pode mantê-lo ou reajustá-lo conforme sua estratégia, custos, plataforma e resposta do público.</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div><strong>Xadrez Essencial</strong><br>Autor: Douglas Lundy</div>
+      <div>Produto digital. Resultados dependem de estudo, prática e aplicação consistente.<br>© <span id="year"></span> Douglas Lundy. Todos os direitos reservados.</div>
+    </div>
+  </footer>
+
+  <div class="mobile-cta">
+    <div><b>Xadrez Essencial</b><small>R$ 39,90</small></div>
+    <a class="btn btn-primary checkout-link" href="https://SEU-CHECKOUT-AQUI">Comprar agora</a>
+  </div>
+
+  <script>
+    // CONFIGURAÇÃO RÁPIDA: substitua a URL abaixo pelo seu checkout real.
+    const CONFIG = {
+      checkoutUrl: "https://SEU-CHECKOUT-AQUI"
+    };
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    document.querySelectorAll('.checkout-link').forEach(link => {
+      link.href = CONFIG.checkoutUrl;
+      link.addEventListener('click', (event) => {
+        if (!CONFIG.checkoutUrl || CONFIG.checkoutUrl.includes('SEU-CHECKOUT-AQUI')) {
+          event.preventDefault();
+          alert('Configure a URL do checkout no bloco CONFIG, no final do arquivo HTML.');
+        }
+      });
+    });
+
+    document.querySelectorAll('.faq-q').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        const willOpen = !item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(openItem => {
+          openItem.classList.remove('open');
+          openItem.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+        if (willOpen) {
+          item.classList.add('open');
+          button.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
