@@ -1,46 +1,47 @@
-LANDING PAGE — XADREZ ESSENCIAL
+LANDING PAGE - XADREZ ESSENCIAL
 
-ARQUIVOS DA PÁGINA
-- index.html: página completa e responsiva.
+ARQUIVOS DA PAGINA
+- index.html: pagina completa e responsiva.
+- assets/checkout.js: checkout transparente integrado ao backend.
 - assets/capa-xadrez-essencial.png: capa atual do livro.
-- assets/exercicio-tabuleiro.png: exemplo de exercício com posição limpa.
-- assets/gabarito-visual.png: exemplo de solução anotada no tabuleiro.
+- assets/exercicio-tabuleiro.png: exemplo de exercicio com posicao limpa.
+- assets/gabarito-visual.png: exemplo de solucao anotada no tabuleiro.
+- api/: endpoints serverless para Vercel.
+- migrations/: schema PostgreSQL.
 
-INFORMAÇÕES DA VERSÃO ATUAL
-- Título: Xadrez Essencial.
+INFORMACOES DA VERSAO ATUAL
+- Titulo: Xadrez Essencial.
 - Autor: Douglas Lundy.
-- Formato: PDF digital de 7 × 10 polegadas.
-- Extensão: 619 páginas organizadas em 10 volumes.
-- Conteúdo visual: 300 diagramas.
-- Treinamento: 229 exercícios práticos com tabuleiro.
-- Respostas: 229 gabaritos visuais com setas, casas críticas, notação e explicação técnica.
-- A oferta não inclui os dois bônus anunciados na versão anterior da página.
+- Formato: PDF digital de 7 x 10 polegadas.
+- Extensao: 619 paginas organizadas em 10 volumes.
+- Conteudo visual: 300 diagramas.
+- Treinamento: 229 exercicios praticos com tabuleiro.
+- Respostas: 229 gabaritos visuais com setas, casas criticas, notacao e explicacao tecnica.
 
-CONFIGURAÇÃO DO CHECKOUT
-1. Abra index.html em um editor de texto.
-2. Localize, no final do arquivo:
-   const CONFIG = { checkoutUrl: "https://SEU-CHECKOUT-AQUI" };
-3. Substitua pelo endereço real da Hotmart, Kiwify, Eduzz, Monetizze, Stripe, Mercado Pago ou outra plataforma escolhida.
+CONFIGURACAO DO CHECKOUT
+- O checkout agora e integrado na propria pagina via Mercado Pago Checkout Transparente.
+- Configure as variaveis de ambiente na Vercel conforme README.md e .env.example.
+- Execute as migrations PostgreSQL antes de publicar em producao.
+- Cadastre o webhook: {APP_BASE_URL}/api/mercadopago/webhook.
 
-PREÇO SUGERIDO
-- Lançamento: R$ 39,90.
-- A página não exibe desconto fictício, contagem regressiva ou depoimentos inventados.
-- Caso altere o preço, atualize também:
-  a) textos visíveis;
-  b) marcação Product/Offer no bloco application/ld+json;
-  c) botão fixo para celular.
+PRECO
+- Lancamento: R$ 39,90.
+- O valor oficial usado para cobranca fica no servidor em api/_lib/constants.js.
+- Se alterar o preco, atualize tambem os textos visiveis, o schema Product/Offer e os testes.
 
-PUBLICAÇÃO
-- Pode ser enviado diretamente para hospedagens estáticas, como Netlify, Vercel, GitHub Pages ou o gerenciador de arquivos da sua hospedagem.
-- Publique index.html e a pasta assets no mesmo diretório, preservando os nomes e a estrutura das pastas.
+PUBLICACAO
+- Este projeto agora precisa de Vercel Functions e PostgreSQL persistente.
+- Hospedagens puramente estaticas, como GitHub Pages, nao executam o backend de pagamento.
+- Publique com as variaveis de ambiente configuradas e redeploy apos qualquer mudanca de segredo.
 
 DADOS A REVISAR ANTES DE PUBLICAR
-- URL do checkout.
-- Política de privacidade e termos de compra, se exigidos pela plataforma.
-- Condições reais de entrega, garantia e parcelamento.
-- Dados de contato e suporte.
-- Domínio e metadados de compartilhamento, se desejar.
-- Confirme que as três imagens da pasta assets carregam corretamente antes de divulgar a página.
+- Credenciais Mercado Pago de producao.
+- Chave Pix ativa no Mercado Pago.
+- Banco PostgreSQL e migrations aplicadas.
+- Webhook de pagamentos configurado e simulado.
+- SMTP transacional validado.
+- PRODUCT_ACCESS_URL correto.
+- Politica de privacidade, termos de compra, suporte e condicoes comerciais reais.
 
 AUTOR
 Douglas Lundy

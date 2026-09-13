@@ -1,0 +1,35 @@
+{
+  "name": "xadrez_essencial_landing_page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "node scripts/migrate.js",
+    "lint": "node scripts/check-js.js",
+    "typecheck": "node scripts/check-js.js",
+    "build": "node scripts/check-js.js",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/douglaslundy/landing_chess.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/douglaslundy/landing_chess/issues"
+  },
+  "homepage": "https://github.com/douglaslundy/landing_chess#readme",
+  "dependencies": {
+    "mercadopago": "^3.6.1",
+    "nodemailer": "^10.0.9",
+    "pg": "^8.23.0",
+    "zod": "^4.6.4"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1",
+    "vitest": "^5.0.0"
+  }
+}

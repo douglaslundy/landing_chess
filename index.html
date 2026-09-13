@@ -241,6 +241,38 @@
     .mobile-cta small { display:block; color:var(--muted); }
     .mobile-cta .btn { min-height:44px; padding:0 14px; font-size:.86rem; }
     .notice { margin-top:14px; color:#716b64; font-size:.74rem; line-height:1.45; }
+    .checkout-modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(0,0,0,.74); backdrop-filter: blur(10px); }
+    .checkout-modal.open { display: flex; }
+    .checkout-dialog { width: min(960px, 100%); max-height: calc(100vh - 36px); overflow: auto; border: 1px solid rgba(255,255,255,.16); border-radius: 18px; background: #101014; box-shadow: var(--shadow); }
+    .checkout-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--line); background: rgba(16,16,20,.96); }
+    .checkout-head h2 { margin: 0; font-size: 1.12rem; }
+    .checkout-close { width: 42px; height: 42px; border-radius: 11px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--text); cursor: pointer; font-size: 1.35rem; }
+    .checkout-body { display: grid; grid-template-columns: .9fr 1.1fr; gap: 0; }
+    .checkout-summary { padding: 24px; border-right: 1px solid var(--line); background: rgba(255,255,255,.025); }
+    .checkout-summary h3 { margin: 0 0 8px; font-size: 1.25rem; }
+    .checkout-total { margin: 18px 0; font-size: 2.2rem; font-family: Georgia, serif; font-weight: 900; color: #fff; }
+    .checkout-status { display: grid; gap: 10px; margin-top: 18px; }
+    .status-pill { border: 1px solid var(--line); border-radius: 12px; padding: 12px; color: var(--muted); background: rgba(0,0,0,.14); }
+    .status-pill strong { display: block; color: var(--text); }
+    .checkout-main { padding: 24px; }
+    .checkout-grid { display: grid; gap: 14px; }
+    .field { display: grid; gap: 6px; }
+    .field label { font-weight: 800; font-size: .9rem; }
+    .field input, .field select, .mp-field { width: 100%; min-height: 46px; border-radius: 10px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.045); color: var(--text); padding: 10px 12px; font: inherit; }
+    .field input::placeholder { color: #8f8a84; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .method-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px 0; }
+    .method-tab { min-height: 48px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.04); color: var(--text); font-weight: 900; cursor: pointer; }
+    .method-tab.active { border-color: rgba(255,42,47,.65); background: rgba(209,14,23,.18); }
+    .method-panel { display: none; }
+    .method-panel.active { display: block; }
+    .checkout-message { min-height: 24px; color: #ffd8d8; font-size: .92rem; }
+    .pix-box { display: none; margin-top: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); }
+    .pix-box.show { display: grid; gap: 12px; }
+    .pix-box img { width: 220px; max-width: 100%; background: #fff; border-radius: 8px; padding: 8px; }
+    .pix-code { width: 100%; min-height: 90px; resize: vertical; border-radius: 10px; border: 1px solid var(--line); background: #0b0b0e; color: var(--text); padding: 10px; }
+    .checkout-small { color: var(--muted); font-size: .82rem; }
+    .checkout-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
     @media (max-width: 960px) {
       .nav-links a:not(.btn) { display:none; }
       .hero-grid, .included, .offer-box { grid-template-columns:1fr; }
@@ -248,6 +280,8 @@
       .book-stage { min-height:560px; }
       .benefits { grid-template-columns:repeat(2,1fr); }
       .offer-box { padding:40px; }
+      .checkout-body { grid-template-columns:1fr; }
+      .checkout-summary { border-right:0; border-bottom:1px solid var(--line); }
     }
     @media (max-width: 680px) {
       .container { width:min(var(--max), calc(100% - 24px)); }
@@ -272,6 +306,8 @@
       .price .major { font-size:4rem; }
       .mobile-cta { display:flex; }
       footer { padding-bottom:110px; }
+      .checkout-dialog { max-height:calc(100vh - 24px); }
+      .checkout-body, .field-row { grid-template-columns:1fr; }
     }
   </style>
   <script type="application/ld+json">
@@ -496,10 +532,97 @@
     <a class="btn btn-primary checkout-link" href="https://SEU-CHECKOUT-AQUI">Comprar agora</a>
   </div>
 
+  <div class="checkout-modal" id="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+    <div class="checkout-dialog">
+      <div class="checkout-head">
+        <h2 id="checkout-title">Checkout seguro</h2>
+        <button class="checkout-close" type="button" id="checkout-close" aria-label="Fechar checkout">x</button>
+      </div>
+      <div class="checkout-body">
+        <aside class="checkout-summary" aria-label="Resumo da compra">
+          <h3>Xadrez Essencial</h3>
+          <p class="checkout-small">Livro digital em PDF, 10 volumes, 619 paginas, 300 diagramas e 229 exercicios.</p>
+          <div class="checkout-total">R$ 39,90</div>
+          <div class="checkout-status">
+            <div class="status-pill"><strong id="payment-status-title">Aguardando inicio</strong><span id="payment-status-detail">Preencha seus dados para criar o pedido.</span></div>
+            <div class="status-pill"><strong id="email-status-title">E-mail ainda nao enviado</strong><span id="email-status-detail">O acesso e enviado apos confirmacao oficial do pagamento.</span></div>
+          </div>
+          <p class="checkout-small">A pagina consulta o backend a cada 4 segundos enquanto o pagamento esta em aberto. Em abas inativas, o intervalo aumenta para reduzir trafego.</p>
+        </aside>
+        <div class="checkout-main">
+          <form id="buyer-form" class="checkout-grid">
+            <div class="field">
+              <label for="buyer-name">Nome completo</label>
+              <input id="buyer-name" name="buyerName" autocomplete="name" required minlength="3" />
+            </div>
+            <div class="field">
+              <label for="buyer-email">E-mail para receber o acesso</label>
+              <input id="buyer-email" name="buyerEmail" type="email" autocomplete="email" required />
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="doc-type">Documento</label>
+                <select id="doc-type" name="documentType"><option value="">Selecionar no pagamento</option><option value="CPF">CPF</option><option value="CNPJ">CNPJ</option></select>
+              </div>
+              <div class="field">
+                <label for="doc-number">Numero do documento</label>
+                <input id="doc-number" name="documentNumber" inputmode="numeric" autocomplete="off" />
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit" id="create-order-button">Continuar para pagamento</button>
+          </form>
+
+          <div id="payment-area" hidden>
+            <div class="method-tabs" role="tablist" aria-label="Forma de pagamento">
+              <button class="method-tab active" type="button" data-method="pix">Pix</button>
+              <button class="method-tab" type="button" data-method="card">Cartao de credito</button>
+            </div>
+            <div class="method-panel active" id="method-pix">
+              <p class="checkout-small">Gere o QR Code e pague no aplicativo do seu banco. A confirmacao depende do retorno oficial do Mercado Pago.</p>
+              <button class="btn btn-primary" type="button" id="pix-button">Gerar Pix</button>
+              <div class="pix-box" id="pix-box">
+                <img id="pix-qr" alt="QR Code Pix" />
+                <label class="field" for="pix-code"><span>Codigo copia e cola</span><textarea class="pix-code" id="pix-code" readonly></textarea></label>
+                <div class="checkout-actions">
+                  <button class="btn btn-ghost" type="button" id="copy-pix">Copiar codigo</button>
+                  <a class="btn btn-ghost" id="pix-ticket" href="#" target="_blank" rel="noopener">Abrir instrucoes</a>
+                </div>
+                <p class="checkout-small" id="pix-expiration"></p>
+              </div>
+            </div>
+            <div class="method-panel" id="method-card">
+              <p class="checkout-small">Os dados do cartao sao tokenizados pelo Mercado Pago. Numero completo e CVV nao passam pelo servidor desta pagina.</p>
+              <form id="card-form" class="checkout-grid">
+                <div class="field"><label for="form-checkout__cardholderName">Nome impresso no cartao</label><input id="form-checkout__cardholderName" /></div>
+                <div class="field"><label for="form-checkout__cardNumber">Numero do cartao</label><div id="form-checkout__cardNumber" class="mp-field"></div></div>
+                <div class="field-row">
+                  <div class="field"><label for="form-checkout__expirationDate">Validade</label><div id="form-checkout__expirationDate" class="mp-field"></div></div>
+                  <div class="field"><label for="form-checkout__securityCode">CVV</label><div id="form-checkout__securityCode" class="mp-field"></div></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="form-checkout__issuer">Banco emissor</label><select id="form-checkout__issuer"></select></div>
+                  <div class="field"><label for="form-checkout__installments">Parcelas</label><select id="form-checkout__installments"></select></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="form-checkout__identificationType">Tipo de documento</label><select id="form-checkout__identificationType"></select></div>
+                  <div class="field"><label for="form-checkout__identificationNumber">Numero do documento</label><input id="form-checkout__identificationNumber" /></div>
+                </div>
+                <input id="form-checkout__cardholderEmail" type="email" hidden />
+                <button class="btn btn-primary" id="card-submit" type="submit">Pagar com cartao</button>
+              </form>
+            </div>
+            <p class="checkout-message" id="checkout-message" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
   <script>
     // CONFIGURAÇÃO RÁPIDA: substitua a URL abaixo pelo seu checkout real.
     const CONFIG = {
-      checkoutUrl: "https://SEU-CHECKOUT-AQUI"
+      checkoutUrl: "#checkout"
     };
 
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -529,5 +652,6 @@
       });
     });
   </script>
+  <script src="assets/checkout.js"></script>
 </body>
 </html>
