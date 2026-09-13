@@ -32,6 +32,13 @@
     message.textContent = text || '';
   }
 
+  function redirectToSuccess(order) {
+    if (order.status !== 'paid' || !order.accessUrl || !checkout.orderToken) return false;
+    sessionStorage.setItem('checkoutOrderToken', checkout.orderToken);
+    window.location.assign(`success.html?token=${encodeURIComponent(checkout.orderToken)}`);
+    return true;
+  }
+
   function updateVisual(order) {
     const statusTitle = document.getElementById('payment-status-title');
     const statusDetail = document.getElementById('payment-status-detail');
@@ -51,6 +58,8 @@
     const current = labels[order.status] || ['Status atualizado', order.status];
     statusTitle.textContent = current[0];
     statusDetail.textContent = current[1];
+
+    if (redirectToSuccess(order)) return;
 
     if (order.emailStatus === 'sent') {
       emailTitle.textContent = 'E-mail enviado pelo SMTP';

@@ -48,7 +48,9 @@ function publicOrder(order, attempt) {
     } : null,
     confirmedAt: order.payment_confirmed_at,
     emailStatus: order.email_status || 'not_queued',
-    emailSentAt: order.email_sent_at
+    emailSentAt: order.email_sent_at,
+    // The product URL is server-only until the payment is officially confirmed.
+    accessUrl: order.status === 'paid' ? process.env.PRODUCT_ACCESS_URL || null : null
   };
 }
 
