@@ -48,7 +48,7 @@
 | Fase | Descrição | Status |
 |---|---|---|
 | 0 | Higiene: repo atualizado + backlog persistente | ✅ Concluída (2026-09-14) |
-| 1 | Infra na VPS (recon read-only, Docker, Traefik, Postgres, rollback) | 📝 Plano pronto — [design](docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md), [plano](docs/superpowers/plans/2026-09-15-fase1-infra-vps.md); execução pendente |
+| 1 | Infra na VPS (recon read-only, Docker, Traefik, Postgres, rollback) | ✅ Concluída (2026-09-15) — [design](docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md), [plano](docs/superpowers/plans/2026-09-15-fase1-infra-vps.md). `https://chess.dlsistemas.com.br` no ar, TLS válido, app↔postgres ok, isolamento validado (diff antes/depois só mostra os 2 containers novos). |
 | 2 | Migrar app atual (landing + checkout + webhook + cron) para Next.js | ⏳ Não iniciada |
 | 3 | Autenticação (admin + cliente) + log de acesso | ⏳ Não iniciada |
 | 4 | Área do cliente (login opcional, aulas, troca de senha) | ⏳ Não iniciada |
