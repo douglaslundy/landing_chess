@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "next": "^15.5.0",
+    "nodemailer": "^10.0.9",
     "pg": "^8.23.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
