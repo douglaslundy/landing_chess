@@ -49,7 +49,7 @@
 |---|---|---|
 | 0 | Higiene: repo atualizado + backlog persistente | ✅ Concluída (2026-09-14) |
 | 1 | Infra na VPS (recon read-only, Docker, Traefik, Postgres, rollback) | ✅ Concluída (2026-09-15) — [design](docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md), [plano](docs/superpowers/plans/2026-09-15-fase1-infra-vps.md). `https://chess.dlsistemas.com.br` no ar, TLS válido, app↔postgres ok, isolamento validado. Revisão final (5 fixes: renderização dinâmica da home, TLS verificado por padrão, health endpoint sem vazar erro, middleware Traefik próprio em vez de emprestado do `corridas`, nome de projeto Compose fixado como `xadrez`) já aplicada e reimplantada. |
-| 2 | Migrar app atual (landing + checkout + webhook + cron) para Next.js | 📝 Spec aprovado — [design](docs/superpowers/specs/2026-09-15-fase2-app-migration-design.md); plano a gerar |
+| 2 | Migrar app atual (landing + checkout + webhook + cron) para Next.js | 📝 Plano pronto — [design](docs/superpowers/specs/2026-09-15-fase2-app-migration-design.md), [plano](docs/superpowers/plans/2026-09-15-fase2-app-migration.md) (10 tasks); execução pendente |
 | 3 | Autenticação (admin + cliente) + log de acesso | ⏳ Não iniciada |
 | 4 | Área do cliente (login opcional, aulas, troca de senha) | ⏳ Não iniciada |
 | 5 | Painel admin (dashboard, CRUD de aulas, configurações em DB) | ⏳ Não iniciada |
