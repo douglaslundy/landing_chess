@@ -23,12 +23,28 @@
 - Chave SSH da VPS vive na pasta irmã `sysread` (um nível acima do repo) —
   cópia local de uso, nunca deve ser commitada.
 
+## Infra da VPS (fatos fixos, não re-perguntar)
+
+- VPS: `144.91.92.70`, usuário `root`, chave `~/.ssh/id_ed25519`.
+- Domínio do projeto: `chess.dlsistemas.com.br` (DNS A → 144.91.92.70,
+  criação do registro é responsabilidade do usuário).
+- Reverse proxy já existente: Traefik (labels Docker, rede externa
+  `proxy`, certresolver `letsencrypt`). Não há Nginx manual.
+- Convenção de outros sistemas na VPS: `/opt/<nome>/`, rede interna
+  própria para o banco, container público também na rede `proxy`. Doc
+  oficial em `/opt/INFRA-README.md` na própria VPS.
+- Nunca editar o crontab root (compartilhado com outros projetos).
+- `Xadrez_Platform_Codex_Blueprint` (pasta irmã) foi descartado pelo
+  usuário — não usar como base, é uma tentativa antiga abandonada.
+- Detalhes completos do levantamento: veja
+  `docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md`.
+
 ## Fases
 
 | Fase | Descrição | Status |
 |---|---|---|
 | 0 | Higiene: repo atualizado + backlog persistente | ✅ Concluída (2026-09-14) |
-| 1 | Infra na VPS (recon read-only, Docker, Nginx, Postgres, rollback) | 🔜 Em brainstorming |
+| 1 | Infra na VPS (recon read-only, Docker, Traefik, Postgres, rollback) | ✅ Spec aprovado — [design](docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md), plano a gerar |
 | 2 | Migrar app atual (landing + checkout + webhook + cron) para Next.js | ⏳ Não iniciada |
 | 3 | Autenticação (admin + cliente) + log de acesso | ⏳ Não iniciada |
 | 4 | Área do cliente (login opcional, aulas, troca de senha) | ⏳ Não iniciada |
