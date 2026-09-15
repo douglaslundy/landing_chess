@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: xadrez-postgres
+    restart: unless-stopped
+    env_file:
+      - /opt/xadrez-essencial/.env
+    volumes:
+      - xadrez_postgres_data:/var/lib/postgresql/data
+    networks:
+      - xadrez_internal
+
+  app:
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+    container_name: xadrez-app
+    restart: unless-stopped
+    env_file:
+      - /opt/xadrez-essencial/.env
+    depends_on:
+      - postgres
+    networks:
+      - xadrez_internal
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "proxy"
+      traefik.http.routers.xadrez-http.rule: "Host(`chess.dlsistemas.com.br`)"
+      traefik.http.routers.xadrez-http.entrypoints: "web"
+      traefik.http.routers.xadrez-http.middlewares: "redirect-to-https"
+      traefik.http.routers.xadrez.rule: "Host(`chess.dlsistemas.com.br`)"
+      traefik.http.routers.xadrez.entrypoints: "websecure"
+      traefik.http.routers.xadrez.tls: "true"
+      traefik.http.routers.xadrez.tls.certresolver: "letsencrypt"
+      traefik.http.services.xadrez.loadbalancer.server.port: "3000"
+
+networks:
+  xadrez_internal:
+    external: false
+  proxy:
+    external: true
+
+volumes:
+  xadrez_postgres_data:
