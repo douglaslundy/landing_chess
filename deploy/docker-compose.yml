@@ -1,3 +1,5 @@
+name: xadrez
+
 services:
   postgres:
     image: postgres:17-alpine
@@ -28,7 +30,8 @@ services:
       traefik.docker.network: "proxy"
       traefik.http.routers.xadrez-http.rule: "Host(`chess.dlsistemas.com.br`)"
       traefik.http.routers.xadrez-http.entrypoints: "web"
-      traefik.http.routers.xadrez-http.middlewares: "redirect-to-https"
+      traefik.http.middlewares.xadrez-redirect-to-https.redirectscheme.scheme: "https"
+      traefik.http.routers.xadrez-http.middlewares: "xadrez-redirect-to-https"
       traefik.http.routers.xadrez.rule: "Host(`chess.dlsistemas.com.br`)"
       traefik.http.routers.xadrez.entrypoints: "websecure"
       traefik.http.routers.xadrez.tls: "true"

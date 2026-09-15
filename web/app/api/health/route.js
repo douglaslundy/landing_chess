@@ -6,9 +6,7 @@ export async function GET() {
     await checkDatabaseConnection();
     return NextResponse.json({ ok: true, db: 'connected' });
   } catch (error) {
-    return NextResponse.json(
-      { ok: false, db: 'error', message: error.message },
-      { status: 503 }
-    );
+    console.error('[health] database check failed:', error);
+    return NextResponse.json({ ok: false, db: 'error' }, { status: 503 });
   }
 }

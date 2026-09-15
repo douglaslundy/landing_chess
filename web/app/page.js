@@ -1,5 +1,7 @@
 import { checkDatabaseConnection } from '../lib/db.js';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   let dbStatus = 'desconhecido';
   try {

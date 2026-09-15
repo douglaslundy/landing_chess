@@ -6,7 +6,9 @@ function getPool() {
   if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+      ssl: process.env.DATABASE_SSL === 'true'
+        ? { rejectUnauthorized: process.env.DATABASE_SSL_INSECURE !== 'true' }
+        : false,
       max: 3
     });
   }
