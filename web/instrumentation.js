@@ -4,6 +4,10 @@ export async function register() {
   const cron = await import('node-cron');
   const { runReconciliation } = await import('./lib/reconcile.js');
 
+  // In-memory lock — only prevents overlap within this single process.
+  // If this app is ever scaled to multiple replicas, each would reconcile
+  // independently (safe, since applyOfficialPayment uses `select ... for
+  // update`, but wasteful — worth revisiting before scaling out).
   let running = false;
   cron.default.schedule('*/10 * * * *', async () => {
     if (running) return;

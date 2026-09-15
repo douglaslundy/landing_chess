@@ -1,4 +1,10 @@
 export function getClientIp(request) {
+  // Domain is Cloudflare-proxied; Traefik has no forwardedHeaders.trustedIPs
+  // configured, so X-Forwarded-For gets overwritten with Cloudflare's edge
+  // IP rather than the real visitor. CF-Connecting-IP is Cloudflare's own
+  // edge-set header (not client-spoofable) and reflects the real visitor.
+  const cfIp = request.headers.get('cf-connecting-ip');
+  if (typeof cfIp === 'string' && cfIp) return cfIp.trim();
   const forwarded = request.headers.get('x-forwarded-for');
   if (typeof forwarded === 'string' && forwarded) return forwarded.split(',')[0].trim();
   return 'unknown';

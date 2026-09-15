@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { publicConfig } from '../../../lib/env.js';
 import { PRODUCT } from '../../../lib/constants.js';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     return NextResponse.json({

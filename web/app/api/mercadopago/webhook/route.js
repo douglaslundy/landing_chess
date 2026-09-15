@@ -10,7 +10,12 @@ import { optional } from '../../../../lib/env.js';
 export async function POST(request) {
   try {
     const url = new URL(request.url);
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      body = {};
+    }
     const dataId = url.searchParams.get('data.id') || body.data?.id;
     const type = url.searchParams.get('type') || body.type;
     const secret = optional('MERCADOPAGO_WEBHOOK_SECRET');
@@ -22,7 +27,7 @@ export async function POST(request) {
       secret
     }) : false;
 
-    if (secret && !signatureValid) {
+    if (!signatureValid) {
       await query(
         `insert into webhook_events (id, provider_event_id, topic, resource_id, signature_valid, payload)
          values ($1, $2, $3, $4, false, $5::jsonb)`,

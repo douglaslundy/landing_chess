@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { checkDatabaseConnection } from '../../../lib/db.js';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     await checkDatabaseConnection();

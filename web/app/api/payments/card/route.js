@@ -11,7 +11,13 @@ export async function POST(request) {
     const allowed = await rateLimit({ key: `card:${ip}`, limit: 8, windowSeconds: 300 });
     if (!allowed) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
 
-    const body = cardPaymentSchema.parse(await request.json());
+    let raw;
+    try {
+      raw = await request.json();
+    } catch {
+      raw = {};
+    }
+    const body = cardPaymentSchema.parse(raw);
     const order = await getOrderByToken(body.orderToken);
     if (!order) return NextResponse.json({ error: 'order_not_found' }, { status: 404 });
     if (order.status === 'paid') return NextResponse.json(publicOrder(order, null));

@@ -31,7 +31,13 @@ export async function POST(request) {
     const allowed = await rateLimit({ key: `orders:${ip}`, limit: 20, windowSeconds: 300 });
     if (!allowed) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
 
-    const body = createOrderSchema.parse(await request.json());
+    let raw;
+    try {
+      raw = await request.json();
+    } catch {
+      raw = {};
+    }
+    const body = createOrderSchema.parse(raw);
     const order = await createOrder(body);
     return NextResponse.json(publicOrder(order, null), { status: 201 });
   } catch (error) {

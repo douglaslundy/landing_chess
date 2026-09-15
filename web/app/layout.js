@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Xadrez Essencial',
-  description: 'Fase 1 — infraestrutura VPS'
+  description: 'Livro digital Xadrez Essencial — 10 volumes em PDF'
 };
 
 export default function RootLayout({ children }) {
