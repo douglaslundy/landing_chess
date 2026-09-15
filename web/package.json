@@ -1,0 +1,21 @@
+{
+  "name": "xadrez-essencial-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "next": "^15.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.0"
+  }
+}
