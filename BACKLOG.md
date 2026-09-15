@@ -20,8 +20,12 @@
   arquivo no projeto.
 - Nunca persistir dado de cartão de crédito (Mercado Pago já tokeniza; regra
   vale para todo o sistema novo também).
-- Chave SSH da VPS vive na pasta irmã `sysread` (um nível acima do repo) —
-  cópia local de uso, nunca deve ser commitada.
+- Chave SSH da VPS: `~/.ssh/id_ed25519` (`C:\Users\dougl\.ssh\id_ed25519`),
+  confirmado em 2026-09-15 — arquivo existe localmente e `known_hosts` tem
+  3 entradas prévias para `144.91.92.70`, indicando uso anterior real. (A
+  claim antiga apontando para a pasta irmã `sysread` estava errada — aquele
+  é um projeto não relacionado, "Sysread" PWA de leitura, sem chave
+  nenhuma; corrigido.) Nunca commitar a chave.
 
 ## Infra da VPS (fatos fixos, não re-perguntar)
 
@@ -44,7 +48,7 @@
 | Fase | Descrição | Status |
 |---|---|---|
 | 0 | Higiene: repo atualizado + backlog persistente | ✅ Concluída (2026-09-14) |
-| 1 | Infra na VPS (recon read-only, Docker, Traefik, Postgres, rollback) | ✅ Spec aprovado — [design](docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md), plano a gerar |
+| 1 | Infra na VPS (recon read-only, Docker, Traefik, Postgres, rollback) | 📝 Plano pronto — [design](docs/superpowers/specs/2026-09-14-fase1-infra-vps-design.md), [plano](docs/superpowers/plans/2026-09-15-fase1-infra-vps.md); execução pendente |
 | 2 | Migrar app atual (landing + checkout + webhook + cron) para Next.js | ⏳ Não iniciada |
 | 3 | Autenticação (admin + cliente) + log de acesso | ⏳ Não iniciada |
 | 4 | Área do cliente (login opcional, aulas, troca de senha) | ⏳ Não iniciada |
