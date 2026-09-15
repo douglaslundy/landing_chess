@@ -142,7 +142,8 @@ web/
     security.test.mjs                # idem
     frontend.test.mjs                # idem
     acceptance-coverage.test.mjs     # idem
-  package.json                       # ganha mercadopago, nodemailer, zod, node-cron
+  package.json                       # ganha nodemailer, zod, node-cron (Mercado
+                                      #   Pago é chamado via fetch cru, sem SDK)
 ```
 
 Migrations: **não duplica** `migrations/001_init.sql` nem
