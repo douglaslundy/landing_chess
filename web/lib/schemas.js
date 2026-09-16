@@ -19,3 +19,18 @@ export const cardPaymentSchema = orderTokenSchema.extend({
   identificationType: z.string().trim().max(12).optional().or(z.literal('')),
   identificationNumber: z.string().trim().max(32).optional().or(z.literal(''))
 });
+
+export const adminLoginSchema = z.object({
+  email: z.string().trim().email().max(180),
+  password: z.string().min(1).max(200)
+});
+
+export const clientLoginSchema = adminLoginSchema;
+
+export const clientMagicLinkRequestSchema = z.object({
+  email: z.string().trim().email().max(180)
+});
+
+export const clientSetPasswordSchema = z.object({
+  password: z.string().min(8).max(200)
+});
