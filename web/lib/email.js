@@ -1,7 +1,8 @@
 import nodemailer from 'nodemailer';
 import { smtpConfig, serverConfig } from './env.js';
 import { withTransaction, query } from './db.js';
-import { PRODUCT } from './constants.js';
+import { PRODUCT, MAGIC_LINK_TTL_SECONDS } from './constants.js';
+import { createMagicLink } from './auth/magicLink.js';
 
 function transporter() {
   const cfg = smtpConfig();
@@ -14,9 +15,12 @@ function transporter() {
   });
 }
 
-export function buildEmail(order) {
+export function buildEmail(order, magicLinkUrl) {
   const { productAccessUrl } = serverConfig();
   const subject = 'Seu acesso ao Xadrez Essencial';
+  const magicLinkText = magicLinkUrl
+    ? `\n\nVocê também já pode entrar direto na área de aulas por aqui (link de uso único, válido por 30 minutos): ${magicLinkUrl}`
+    : '';
   const text = [
     `Olá, ${order.buyer_name}.`,
     '',
@@ -26,12 +30,16 @@ export function buildEmail(order) {
     'Este link é fixo e pode ser compartilhado. Ele não é um controle individual de acesso.',
     '',
     'Douglas Lundy'
-  ].join('\n');
+  ].join('\n') + magicLinkText;
+  const magicLinkHtml = magicLinkUrl
+    ? `<p><a href="${magicLinkUrl}">Entrar na área de aulas agora</a> (link de uso único, válido por 30 minutos).</p>`
+    : '';
   const html = `
     <p>Olá, ${escapeHtml(order.buyer_name)}.</p>
     <p>Recebemos a confirmação do pagamento da compra <strong>${order.id}</strong>.</p>
     <p><a href="${productAccessUrl}" style="display:inline-block;background:#d10e17;color:#fff;padding:14px 18px;border-radius:8px;text-decoration:none;font-weight:700">Acessar ${PRODUCT.title}</a></p>
     <p>Se o botão não abrir, use este link:<br><a href="${productAccessUrl}">${productAccessUrl}</a></p>
+    ${magicLinkHtml}
     <p><small>Este link é fixo e pode ser compartilhado. Ele não é um controle individual de acesso.</small></p>
   `;
   return { subject, text, html };
@@ -73,7 +81,10 @@ export async function processEmailOutbox(limit = 10) {
   for (const job of jobs) {
     try {
       const cfg = smtpConfig();
-      const message = buildEmail(job);
+      const { appBaseUrl } = serverConfig();
+      const magicLinkToken = await createMagicLink(job.buyer_email, MAGIC_LINK_TTL_SECONDS);
+      const magicLinkUrl = `${appBaseUrl}/api/client/magic-link/consume?token=${magicLinkToken}`;
+      const message = buildEmail(job, magicLinkUrl);
       const info = await mailer.sendMail({
         from: cfg.from,
         to: job.buyer_email,
