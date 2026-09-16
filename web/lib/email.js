@@ -119,3 +119,18 @@ export async function processEmailOutbox(limit = 10) {
   }
   return results;
 }
+
+export async function sendMagicLinkEmail(email, token) {
+  const cfg = smtpConfig();
+  const { appBaseUrl } = serverConfig();
+  const url = `${appBaseUrl}/api/client/magic-link/consume?token=${token}`;
+  const mailer = transporter();
+  await mailer.sendMail({
+    from: cfg.from,
+    to: email,
+    replyTo: cfg.replyTo,
+    subject: 'Seu link de acesso — Xadrez Essencial',
+    text: `Use este link para entrar na sua área de aulas (válido por 30 minutos, uso único):\n${url}`,
+    html: `<p>Use este link para entrar na sua área de aulas (válido por 30 minutos, uso único):</p><p><a href="${url}">${url}</a></p>`
+  });
+}
