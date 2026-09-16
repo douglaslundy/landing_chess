@@ -63,8 +63,8 @@ describe('auth route protection safeguards', () => {
     expect(adminPage).toContain('resolveSession');
     expect(clientPage).toContain('resolveSession');
     expect(setPasswordRoute).toContain('resolveSession');
-    expect(adminLessonsRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(2);
-    expect(adminLessonDetailRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(adminLessonsRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(3);
+    expect(adminLessonDetailRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(3);
   });
 
   it('rate-limits every credential-checking or email-dispatching auth route', () => {
