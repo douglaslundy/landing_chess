@@ -3,6 +3,7 @@ import { getPayment, searchPaymentsByExternalReference } from './mercadopago.js'
 import { applyOfficialPayment } from './orders.js';
 import { processEmailOutbox } from './email.js';
 import { cleanupExpiredSessions } from './auth/session.js';
+import { cleanupExpiredMagicLinks } from './auth/magicLink.js';
 
 export async function runReconciliation() {
   const pendingAttempts = await query(
@@ -34,5 +35,6 @@ export async function runReconciliation() {
 
   const emails = await processEmailOutbox(20);
   const sessionsCleaned = await cleanupExpiredSessions();
-  return { reconciled, emails, sessionsCleaned };
+  const magicLinksCleaned = await cleanupExpiredMagicLinks();
+  return { reconciled, emails, sessionsCleaned, magicLinksCleaned };
 }

@@ -3,7 +3,7 @@ import { query } from '../../../../lib/db.js';
 import { getClientIp } from '../../../../lib/http.js';
 import { rateLimit } from '../../../../lib/rate-limit.js';
 import { clientLoginSchema } from '../../../../lib/schemas.js';
-import { verifyPassword } from '../../../../lib/auth/password.js';
+import { verifyPassword, DUMMY_PASSWORD_HASH } from '../../../../lib/auth/password.js';
 import { createSession } from '../../../../lib/auth/session.js';
 import { setSessionCookie, CLIENT_COOKIE } from '../../../../lib/auth/cookies.js';
 import { logAccess } from '../../../../lib/auth/accessLog.js';
@@ -22,7 +22,9 @@ export async function POST(request) {
 
     const result = await query('select password_hash from client_credentials where email = $1', [normalizedEmail]);
     const credentials = result.rows[0];
-    const valid = credentials ? await verifyPassword(password, credentials.password_hash) : false;
+    const valid = credentials
+      ? await verifyPassword(password, credentials.password_hash)
+      : await verifyPassword(password, DUMMY_PASSWORD_HASH);
     if (!valid) {
       await logAccess({ subjectType: 'client', subjectId: null, event: 'login_failure', detail: 'invalid_credentials', ip });
       return NextResponse.json({ error: 'invalid_credentials' }, { status: 401 });

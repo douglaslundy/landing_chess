@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hashPassword, verifyPassword } from '../lib/auth/password.js';
+import { hashPassword, verifyPassword, DUMMY_PASSWORD_HASH } from '../lib/auth/password.js';
 
 describe('password hashing', () => {
   it('hashes and verifies the correct password', async () => {
@@ -21,5 +21,10 @@ describe('password hashing', () => {
 
   it('rejects a malformed stored hash without throwing', async () => {
     await expect(verifyPassword('anything', 'not-a-valid-hash')).resolves.toBe(false);
+  });
+
+  it('DUMMY_PASSWORD_HASH never verifies as a match for any password (used for timing-attack resistance)', async () => {
+    await expect(verifyPassword('anything', DUMMY_PASSWORD_HASH)).resolves.toBe(false);
+    await expect(verifyPassword('', DUMMY_PASSWORD_HASH)).resolves.toBe(false);
   });
 });

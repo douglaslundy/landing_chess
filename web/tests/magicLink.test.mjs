@@ -9,7 +9,7 @@ vi.mock('pg', () => ({
 }));
 
 const { resetPoolForTests } = await import('../lib/db.js');
-const { createMagicLink, consumeMagicLink } = await import('../lib/auth/magicLink.js');
+const { createMagicLink, consumeMagicLink, cleanupExpiredMagicLinks } = await import('../lib/auth/magicLink.js');
 
 describe('magic links', () => {
   beforeEach(() => {
@@ -42,5 +42,10 @@ describe('magic links', () => {
   it('returns null immediately without querying when token is falsy', async () => {
     await expect(consumeMagicLink(null)).resolves.toBeNull();
     expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it('cleans up expired or used magic links and returns the count removed', async () => {
+    queryMock.mockResolvedValueOnce({ rowCount: 4 });
+    await expect(cleanupExpiredMagicLinks()).resolves.toBe(4);
   });
 });

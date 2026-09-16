@@ -35,6 +35,7 @@ describe('financial acceptance safeguards', () => {
     expect(reconcile).toContain('searchPaymentsByExternalReference');
     expect(reconcile).toContain('processEmailOutbox');
     expect(reconcile).toContain('cleanupExpiredSessions');
+    expect(reconcile).toContain('cleanupExpiredMagicLinks');
   });
 
   it('recovers order tracking after reload and renders terminal states distinctly', () => {
@@ -44,5 +45,32 @@ describe('financial acceptance safeguards', () => {
     expect(frontend).toContain('expired:');
     expect(frontend).toContain('refunded:');
     expect(frontend).toContain('charged_back:');
+  });
+});
+
+describe('auth route protection safeguards', () => {
+  const adminLoginRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'login', 'route.js'), 'utf8');
+  const clientLoginRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'login', 'route.js'), 'utf8');
+  const adminPage = fs.readFileSync(path.join(process.cwd(), 'app', 'admin', 'page.js'), 'utf8');
+  const clientPage = fs.readFileSync(path.join(process.cwd(), 'app', 'cliente', 'page.js'), 'utf8');
+  const magicLinkConsumeRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'magic-link', 'consume', 'route.js'), 'utf8');
+  const magicLinkRequestRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'magic-link', 'request', 'route.js'), 'utf8');
+  const setPasswordRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'set-password', 'route.js'), 'utf8');
+
+  it('protects every admin/client protected page and sensitive route behind resolveSession', () => {
+    expect(adminPage).toContain('resolveSession');
+    expect(clientPage).toContain('resolveSession');
+    expect(setPasswordRoute).toContain('resolveSession');
+  });
+
+  it('rate-limits every credential-checking or email-dispatching auth route', () => {
+    expect(adminLoginRoute).toContain('rateLimit');
+    expect(clientLoginRoute).toContain('rateLimit');
+    expect(magicLinkRequestRoute).toContain('rateLimit');
+  });
+
+  it('builds magic-link redirects from appBaseUrl, never from request.url\'s origin', () => {
+    expect(magicLinkConsumeRoute).toContain('appBaseUrl');
+    expect(magicLinkConsumeRoute).not.toContain('redirect(new URL(');
   });
 });

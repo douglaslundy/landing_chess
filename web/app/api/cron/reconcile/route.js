@@ -16,7 +16,9 @@ async function handleReconcile(request) {
     }
     return NextResponse.json({
       reconciled: result.reconciled,
-      emails: result.emails.map(({ id, status }) => ({ id, status }))
+      emails: result.emails.map(({ id, status }) => ({ id, status })),
+      sessionsCleaned: result.sessionsCleaned,
+      magicLinksCleaned: result.magicLinksCleaned
     });
   } catch (error) {
     console.error('[cron/reconcile] failed:', error);

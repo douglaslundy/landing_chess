@@ -27,3 +27,11 @@ export async function consumeMagicLink(token) {
   );
   return result.rows[0] || null;
 }
+
+export async function cleanupExpiredMagicLinks() {
+  const result = await query(
+    'delete from magic_links where expires_at <= now() or used_at is not null',
+    []
+  );
+  return result.rowCount;
+}

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { CLIENT_COOKIE } from '../../lib/auth/cookies.js';
 import { resolveSession } from '../../lib/auth/guard.js';
 import LogoutButton from '../components/LogoutButton.js';
+import SetPasswordForm from '../components/SetPasswordForm.js';
 
 export default async function ClientHomePage() {
   const jar = await cookies();
@@ -14,6 +15,7 @@ export default async function ClientHomePage() {
     <main style={{ padding: 32, fontFamily: 'sans-serif' }}>
       <h1>Área do cliente</h1>
       <p>Em construção.</p>
+      <SetPasswordForm />
       <LogoutButton endpoint="/api/client/logout" redirectTo="/cliente/entrar" />
     </main>
   );
