@@ -56,11 +56,15 @@ describe('auth route protection safeguards', () => {
   const magicLinkConsumeRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'magic-link', 'consume', 'route.js'), 'utf8');
   const magicLinkRequestRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'magic-link', 'request', 'route.js'), 'utf8');
   const setPasswordRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'set-password', 'route.js'), 'utf8');
+  const adminLessonsRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'lessons', 'route.js'), 'utf8');
+  const adminLessonDetailRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'lessons', '[id]', 'route.js'), 'utf8');
 
   it('protects every admin/client protected page and sensitive route behind resolveSession', () => {
     expect(adminPage).toContain('resolveSession');
     expect(clientPage).toContain('resolveSession');
     expect(setPasswordRoute).toContain('resolveSession');
+    expect(adminLessonsRoute).toContain('resolveSession');
+    expect(adminLessonDetailRoute).toContain('resolveSession');
   });
 
   it('rate-limits every credential-checking or email-dispatching auth route', () => {
