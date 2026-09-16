@@ -34,6 +34,7 @@ describe('financial acceptance safeguards', () => {
     expect(reconcile).toContain('authorization');
     expect(reconcile).toContain('searchPaymentsByExternalReference');
     expect(reconcile).toContain('processEmailOutbox');
+    expect(reconcile).toContain('cleanupExpiredSessions');
   });
 
   it('recovers order tracking after reload and renders terminal states distinctly', () => {

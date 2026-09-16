@@ -2,6 +2,7 @@ import { query } from './db.js';
 import { getPayment, searchPaymentsByExternalReference } from './mercadopago.js';
 import { applyOfficialPayment } from './orders.js';
 import { processEmailOutbox } from './email.js';
+import { cleanupExpiredSessions } from './auth/session.js';
 
 export async function runReconciliation() {
   const pendingAttempts = await query(
@@ -32,5 +33,6 @@ export async function runReconciliation() {
   }
 
   const emails = await processEmailOutbox(20);
-  return { reconciled, emails };
+  const sessionsCleaned = await cleanupExpiredSessions();
+  return { reconciled, emails, sessionsCleaned };
 }
