@@ -20,12 +20,24 @@ export function publicConfig() {
 
 export function serverConfig() {
   return {
-    appBaseUrl: required('APP_BASE_URL').replace(/\/$/, ''),
-    mercadoPagoAccessToken: required('MERCADOPAGO_ACCESS_TOKEN'),
-    mercadoPagoWebhookSecret: optional('MERCADOPAGO_WEBHOOK_SECRET'),
-    databaseUrl: required('DATABASE_URL'),
-    productAccessUrl: required('PRODUCT_ACCESS_URL'),
-    cronSecret: required('CRON_SECRET')
+    get appBaseUrl() {
+      return required('APP_BASE_URL').replace(/\/$/, '');
+    },
+    get mercadoPagoAccessToken() {
+      return required('MERCADOPAGO_ACCESS_TOKEN');
+    },
+    get mercadoPagoWebhookSecret() {
+      return optional('MERCADOPAGO_WEBHOOK_SECRET');
+    },
+    get databaseUrl() {
+      return required('DATABASE_URL');
+    },
+    get productAccessUrl() {
+      return required('PRODUCT_ACCESS_URL');
+    },
+    get cronSecret() {
+      return required('CRON_SECRET');
+    }
   };
 }
 
