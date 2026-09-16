@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { hashPassword } from '../web/lib/auth/password.js';
 
 function sqlEscape(value) {
@@ -22,6 +24,6 @@ async function main() {
   console.log(buildInsertSql(email, passwordHash));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   main();
 }
