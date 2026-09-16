@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ADMIN_COOKIE } from '../../lib/auth/cookies.js';
@@ -13,7 +14,7 @@ export default async function AdminHomePage() {
   return (
     <main style={{ padding: 32, fontFamily: 'sans-serif' }}>
       <h1>Painel admin</h1>
-      <p>Em construção.</p>
+      <p><Link href="/admin/aulas">Gerenciar aulas</Link></p>
       <LogoutButton endpoint="/api/admin/logout" redirectTo="/admin/login" />
     </main>
   );
