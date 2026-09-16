@@ -25,6 +25,22 @@ describe('lessonSchema', () => {
     ).toThrow();
   });
 
+  it('rejects a javascript: URL', () => {
+    expect(() =>
+      lessonSchema.parse({ title: 'x', contentType: 'pdf', url: 'javascript:alert(1)', position: 1 })
+    ).toThrow();
+  });
+
+  it('accepts a valid https URL', () => {
+    const parsed = lessonSchema.parse({
+      title: 'x',
+      contentType: 'pdf',
+      url: 'https://example.com/file.pdf',
+      position: 1
+    });
+    expect(parsed.url).toBe('https://example.com/file.pdf');
+  });
+
   it('coerces position to a number', () => {
     const parsed = lessonSchema.parse({
       title: 'x',
