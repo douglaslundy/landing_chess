@@ -34,3 +34,12 @@ export const clientMagicLinkRequestSchema = z.object({
 export const clientSetPasswordSchema = z.object({
   password: z.string().min(8).max(200)
 });
+
+export const lessonSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  description: z.string().trim().max(2000).optional().or(z.literal('')),
+  contentType: z.enum(['pdf', 'video']),
+  url: z.string().trim().url().max(2000),
+  position: z.coerce.number().int(),
+  published: z.boolean().optional().default(true)
+});
