@@ -135,6 +135,18 @@ export async function processEmailOutbox(limit = 10) {
   return results;
 }
 
+export async function sendTestEmail(to) {
+  const { mailer, cfg } = await createTransporter();
+  await mailer.sendMail({
+    from: cfg.from,
+    to,
+    replyTo: cfg.replyTo,
+    subject: 'E-mail de teste — Xadrez Essencial',
+    text: 'Este é um e-mail de teste para confirmar que a configuração SMTP está funcionando.',
+    html: '<p>Este é um e-mail de teste para confirmar que a configuração SMTP está funcionando.</p>'
+  });
+}
+
 export async function sendMagicLinkEmail(email, token) {
   const { mailer, cfg } = await createTransporter();
   const { appBaseUrl } = serverConfig();

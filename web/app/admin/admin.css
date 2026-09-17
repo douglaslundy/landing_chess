@@ -13,6 +13,7 @@
   --white: #fff;
   --shadow: 0 24px 70px rgba(0, 0, 0, .42);
   --radius: 18px;
+  color-scheme: dark;
 }
 
 .admin-body {
@@ -216,6 +217,16 @@ textarea.admin-input {
 textarea.admin-input {
   min-height: 80px;
   resize: vertical;
+}
+
+select.admin-input {
+  background-color: var(--card-2);
+  color: var(--text);
+}
+
+select.admin-input option {
+  background-color: var(--card-2);
+  color: var(--text);
 }
 
 input.admin-input:focus,

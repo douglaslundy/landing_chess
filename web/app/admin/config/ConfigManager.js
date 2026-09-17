@@ -38,6 +38,8 @@ export default function ConfigManager() {
   const [configured, setConfigured] = useState({});
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [testEmailTo, setTestEmailTo] = useState('');
+  const [testEmailStatus, setTestEmailStatus] = useState(null);
 
   async function loadSettings() {
     const response = await fetch('/api/admin/settings');
@@ -94,6 +96,25 @@ export default function ConfigManager() {
     }
     setMessage('Configurações salvas.');
     await loadSettings();
+  }
+
+  async function handleTestEmail() {
+    setTestEmailStatus(null);
+    if (!testEmailTo) {
+      setTestEmailStatus({ type: 'error', message: 'Informe um e-mail de destino.' });
+      return;
+    }
+    const response = await fetch('/api/admin/settings/test-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: testEmailTo })
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setTestEmailStatus({ type: 'error', message: body.error || 'Falha ao enviar. Confira as credenciais SMTP salvas.' });
+      return;
+    }
+    setTestEmailStatus({ type: 'success', message: `E-mail de teste enviado para ${testEmailTo}.` });
   }
 
   return (
@@ -180,6 +201,7 @@ export default function ConfigManager() {
         <section className="admin-card">
           <div className="admin-card-head">
             <h2 className="admin-subtitle">E-mail (SMTP)</h2>
+            <p>Dados do servidor de e-mail usado para enviar a confirmação de compra e os links de acesso aos clientes.</p>
           </div>
           <label className="admin-field">
             Host
@@ -187,6 +209,7 @@ export default function ConfigManager() {
               className="admin-input"
               value={form.smtp_host}
               onChange={(e) => updateField('smtp_host', e.target.value)}
+              placeholder="ex.: smtp.gmail.com"
             />
           </label>
           <label className="admin-field">
@@ -196,6 +219,7 @@ export default function ConfigManager() {
               type="number"
               value={form.smtp_port}
               onChange={(e) => updateField('smtp_port', e.target.value)}
+              placeholder="587 (TLS) ou 465 (SSL)"
             />
           </label>
           <label className="admin-checkbox-field">
@@ -204,7 +228,7 @@ export default function ConfigManager() {
               checked={form.smtp_secure}
               onChange={(e) => updateField('smtp_secure', e.target.checked)}
             />
-            Conexão segura (TLS)
+            Conexão segura (TLS) <span className="admin-field-hint">— marque se a porta for 465, deixe desmarcado para 587</span>
           </label>
           <label className="admin-field">
             Usuário
@@ -212,6 +236,7 @@ export default function ConfigManager() {
               className="admin-input"
               value={form.smtp_user}
               onChange={(e) => updateField('smtp_user', e.target.value)}
+              placeholder="ex.: seuemail@gmail.com"
             />
           </label>
           <label className="admin-field">
@@ -221,7 +246,7 @@ export default function ConfigManager() {
               type="password"
               value={form.smtp_password}
               onChange={(e) => updateField('smtp_password', e.target.value)}
-              placeholder="Deixe em branco para manter a atual"
+              placeholder="senha de app do provedor (não é a senha normal da conta), deixe em branco para manter a atual"
             />
           </label>
           <label className="admin-field">
@@ -230,16 +255,48 @@ export default function ConfigManager() {
               className="admin-input"
               value={form.email_from}
               onChange={(e) => updateField('email_from', e.target.value)}
+              placeholder="ex.: contato@seudominio.com.br"
             />
           </label>
           <label className="admin-field">
-            Responder para
+            Responder para <span className="admin-field-hint">(opcional)</span>
             <input
               className="admin-input"
               value={form.email_reply_to}
               onChange={(e) => updateField('email_reply_to', e.target.value)}
+              placeholder="seu e-mail de suporte, ex.: suporte@seudominio.com.br"
+            />
+            <span className="admin-field-hint">
+              Todo e-mail é enviado ao cliente que comprou, não a este endereço — este campo só define para onde vai a
+              resposta se o cliente clicar em &quot;Responder&quot; no e-mail recebido. Deixe em branco para que as
+              respostas voltem ao próprio endereço de remetente.
+            </span>
+          </label>
+
+          <div className="admin-card-head" style={{ marginTop: 24 }}>
+            <h2 className="admin-subtitle" style={{ fontSize: '1.05rem' }}>Testar envio</h2>
+            <p>Envia um e-mail de teste usando as configurações de SMTP já salvas (salve antes de testar uma mudança).</p>
+          </div>
+          <label className="admin-field">
+            Enviar teste para
+            <input
+              className="admin-input"
+              type="email"
+              value={testEmailTo}
+              onChange={(e) => setTestEmailTo(e.target.value)}
+              placeholder="seu-email@exemplo.com"
             />
           </label>
+          {testEmailStatus && (
+            <p className={`admin-alert admin-alert--${testEmailStatus.type === 'success' ? 'success' : 'error'}`}>
+              {testEmailStatus.message}
+            </p>
+          )}
+          <div className="admin-btn-row">
+            <button type="button" className="admin-btn admin-btn-ghost" onClick={handleTestEmail}>
+              Enviar e-mail de teste
+            </button>
+          </div>
         </section>
 
         <section className="admin-card">

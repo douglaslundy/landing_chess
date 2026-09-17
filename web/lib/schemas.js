@@ -67,3 +67,7 @@ export const settingsUpdateSchema = z.object({
     { message: 'URL deve começar com http:// ou https://' }
   )
 }).partial();
+
+export const testEmailSchema = z.object({
+  to: z.string().trim().email().max(255)
+});
