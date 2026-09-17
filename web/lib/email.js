@@ -1,22 +1,23 @@
 import nodemailer from 'nodemailer';
-import { smtpConfig, serverConfig } from './env.js';
+import { serverConfig } from './env.js';
+import { getSmtpSettings, getProductAccessUrl } from './settings.js';
 import { withTransaction, query } from './db.js';
-import { PRODUCT, MAGIC_LINK_TTL_SECONDS } from './constants.js';
+import { MAGIC_LINK_TTL_SECONDS } from './constants.js';
 import { createMagicLink } from './auth/magicLink.js';
 
-function transporter() {
-  const cfg = smtpConfig();
-  return nodemailer.createTransport({
+async function createTransporter() {
+  const cfg = await getSmtpSettings();
+  const mailer = nodemailer.createTransport({
     host: cfg.host,
     port: cfg.port,
     secure: cfg.secure,
     auth: { user: cfg.user, pass: cfg.password },
     requireTLS: !cfg.secure
   });
+  return { mailer, cfg };
 }
 
-export function buildEmail(order, magicLinkUrl) {
-  const { productAccessUrl } = serverConfig();
+export function buildEmail(order, { magicLinkUrl, productAccessUrl } = {}) {
   const subject = 'Seu acesso ao Xadrez Essencial';
   const magicLinkText = magicLinkUrl
     ? `\n\nVocê também já pode entrar direto na área de aulas por aqui (link de uso único, válido por 30 minutos): ${magicLinkUrl}`
@@ -37,7 +38,7 @@ export function buildEmail(order, magicLinkUrl) {
   const html = `
     <p>Olá, ${escapeHtml(order.buyer_name)}.</p>
     <p>Recebemos a confirmação do pagamento da compra <strong>${order.id}</strong>.</p>
-    <p><a href="${productAccessUrl}" style="display:inline-block;background:#d10e17;color:#fff;padding:14px 18px;border-radius:8px;text-decoration:none;font-weight:700">Acessar ${PRODUCT.title}</a></p>
+    <p><a href="${productAccessUrl}" style="display:inline-block;background:#d10e17;color:#fff;padding:14px 18px;border-radius:8px;text-decoration:none;font-weight:700">Acessar ${escapeHtml(order.product_title)}</a></p>
     <p>Se o botão não abrir, use este link:<br><a href="${productAccessUrl}">${productAccessUrl}</a></p>
     ${magicLinkHtml}
     <p><small>Este link é fixo e pode ser compartilhado. Ele não é um controle individual de acesso.</small></p>
@@ -55,7 +56,7 @@ export async function processEmailOutbox(limit = 10) {
   const jobs = await withTransaction(async (client) => {
     const result = await client.query(
       `
-      select e.*, o.buyer_name, o.buyer_email
+      select e.*, o.buyer_name, o.buyer_email, o.product_title
       from outbox_emails e
       join orders o on o.id = e.order_id
       where e.status in ('pending', 'failed')
@@ -76,15 +77,18 @@ export async function processEmailOutbox(limit = 10) {
     return result.rows;
   });
 
-  const mailer = jobs.length ? transporter() : null;
+  if (!jobs.length) return [];
+
+  const { mailer, cfg } = await createTransporter();
+  const { appBaseUrl } = serverConfig();
+  const productAccessUrl = await getProductAccessUrl();
+
   const results = [];
   for (const job of jobs) {
     try {
-      const cfg = smtpConfig();
-      const { appBaseUrl } = serverConfig();
       const magicLinkToken = await createMagicLink(job.buyer_email, MAGIC_LINK_TTL_SECONDS);
       const magicLinkUrl = `${appBaseUrl}/api/client/magic-link/consume?token=${magicLinkToken}`;
-      const message = buildEmail(job, magicLinkUrl);
+      const message = buildEmail(job, { magicLinkUrl, productAccessUrl });
       const info = await mailer.sendMail({
         from: cfg.from,
         to: job.buyer_email,
@@ -132,10 +136,9 @@ export async function processEmailOutbox(limit = 10) {
 }
 
 export async function sendMagicLinkEmail(email, token) {
-  const cfg = smtpConfig();
+  const { mailer, cfg } = await createTransporter();
   const { appBaseUrl } = serverConfig();
   const url = `${appBaseUrl}/api/client/magic-link/consume?token=${token}`;
-  const mailer = transporter();
   await mailer.sendMail({
     from: cfg.from,
     to: email,
