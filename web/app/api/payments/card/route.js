@@ -32,7 +32,10 @@ export async function POST(request) {
       attempt,
       payment: {
         token: body.token,
-        installments: body.installments,
+        // The checkout never offers installments to the buyer (single
+        // automatic charge only) — always 1, regardless of what the
+        // client sends.
+        installments: 1,
         payment_method_id: body.paymentMethodId,
         issuer_id: body.issuerId || undefined,
         binary_mode: false,

@@ -19,6 +19,8 @@ export async function publicOrder(order, attempt) {
     status: order.status,
     buyerName: order.buyer_name,
     buyerEmail: order.buyer_email,
+    documentType: order.document_type,
+    documentNumber: order.document_number,
     product: {
       title: order.product_title,
       amountCents: order.amount_cents,

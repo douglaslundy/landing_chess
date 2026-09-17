@@ -59,6 +59,13 @@
     statusTitle.textContent = current[0];
     statusDetail.textContent = current[1];
 
+    const summary = document.getElementById('buyer-summary');
+    if (summary) {
+      const parts = [order.buyerName, order.buyerEmail];
+      if (order.documentType && order.documentNumber) parts.push(`${order.documentType} ${order.documentNumber}`);
+      summary.textContent = parts.filter(Boolean).join(' · ');
+    }
+
     if (redirectToSuccess(order)) return;
 
     if (order.emailStatus === 'sent') {
@@ -151,7 +158,7 @@
                 token: data.token,
                 paymentMethodId: data.paymentMethodId,
                 issuerId: data.issuerId,
-                installments: data.installments,
+                installments: 1,
                 identificationType: data.identificationType,
                 identificationNumber: data.identificationNumber
               })

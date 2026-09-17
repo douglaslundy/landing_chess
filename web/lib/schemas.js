@@ -15,7 +15,9 @@ export const cardPaymentSchema = orderTokenSchema.extend({
   token: z.string().trim().min(8).max(512),
   paymentMethodId: z.string().trim().min(1).max(40),
   issuerId: z.union([z.string(), z.number()]).optional().nullable(),
-  installments: z.coerce.number().int().min(1).max(24),
+  // Not used to charge (the server always charges 1 installment), kept
+  // optional so a hidden/unpopulated field never blocks a payment.
+  installments: z.coerce.number().int().min(1).max(24).optional(),
   identificationType: z.string().trim().max(12).optional().or(z.literal('')),
   identificationNumber: z.string().trim().max(32).optional().or(z.literal(''))
 });
