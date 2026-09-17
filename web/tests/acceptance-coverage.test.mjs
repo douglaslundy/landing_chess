@@ -58,6 +58,7 @@ describe('auth route protection safeguards', () => {
   const setPasswordRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'client', 'set-password', 'route.js'), 'utf8');
   const adminLessonsRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'lessons', 'route.js'), 'utf8');
   const adminLessonDetailRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'lessons', '[id]', 'route.js'), 'utf8');
+  const adminSettingsRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'settings', 'route.js'), 'utf8');
 
   it('protects every admin/client protected page and sensitive route behind resolveSession', () => {
     expect(adminPage).toContain('resolveSession');
@@ -65,6 +66,7 @@ describe('auth route protection safeguards', () => {
     expect(setPasswordRoute).toContain('resolveSession');
     expect(adminLessonsRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(3);
     expect(adminLessonDetailRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(3);
+    expect(adminSettingsRoute.match(/resolveSession/g)?.length).toBeGreaterThanOrEqual(3);
   });
 
   it('rate-limits every credential-checking or email-dispatching auth route', () => {
