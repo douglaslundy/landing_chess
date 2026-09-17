@@ -355,11 +355,11 @@ git commit -m "feat(web): add settings store (get/set/list for admin, encryption
 - Modify: `web/tests/settings.test.mjs`
 
 **Interfaces:**
-- Consumes: `getSetting` (same file, Task 3), `required`/`optional` (`web/lib/env.js`),
-  `PRODUCT_CODE` (`web/lib/constants.js` — added in Task 7, but this task only needs the
-  string literal `'xadrez-essencial-pdf'`, written inline here to avoid a forward
-  dependency on Task 7; Task 7 later imports it from constants.js instead of
-  redefining it, once `PRODUCT_CODE` exists there).
+- Consumes: `getSetting` (same file, Task 3), `required`/`optional` (`web/lib/env.js`).
+  The product code `'xadrez-essencial-pdf'` is written as an inline literal in
+  `getProductSettings()` (below) — it's an internal identifier, not something
+  the admin edits, so it doesn't need its own settings key or a `constants.js`
+  export; no other task defines or imports a `PRODUCT_CODE` constant anywhere.
 - Produces: `getProductSettings(): Promise<{code,title,description,amountCents,currency}>`,
   `getMercadoPagoSettings(): Promise<{publicKey,accessToken,webhookSecret}>`,
   `getSmtpSettings(): Promise<{host,port,secure,user,password,from,replyTo}>`,
@@ -1196,11 +1196,10 @@ git commit -m "refactor(web): read Mercado Pago access token from settings, orde
 
 ---
 
-### Task 9: Refactor `web/lib/email.js` to use settings, remove unused `PRODUCT` constant
+### Task 9: Refactor `web/lib/email.js` to use settings
 
 **Files:**
 - Modify: `web/lib/email.js`
-- Modify: `web/lib/constants.js`
 - Modify: `web/tests/email.test.mjs`
 
 **Interfaces:**
@@ -1208,9 +1207,13 @@ git commit -m "refactor(web): read Mercado Pago access token from settings, orde
 - Produces: `buildEmail(order, {magicLinkUrl, productAccessUrl}?)` — signature change from
   Fase 3's `buildEmail(order, magicLinkUrl)`; the only callers are inside this same file
   (`processEmailOutbox`) and the test file, both updated in this task. `sendMagicLinkEmail`
-  and `processEmailOutbox` keep their existing exported signatures. `web/lib/constants.js`
-  no longer exports `PRODUCT` after this task (Tasks 7 and 8 already stopped using it;
-  this is the last consumer, so removal is safe only once this task's rewrite lands).
+  and `processEmailOutbox` keep their existing exported signatures.
+
+**Do NOT touch `web/lib/constants.js` in this task.** `web/app/api/config/route.js`
+still imports `PRODUCT` from it until Task 11 — that task is the true last
+consumer (it comes after this one in the task order) and removes the export
+itself. Removing it here would leave `api/config/route.js` broken between this
+task and Task 11.
 
 - [ ] **Step 1: Rewrite `web/lib/email.js`**
 
@@ -1419,47 +1422,18 @@ describe('delivery email', () => {
 });
 ```
 
-- [ ] **Step 3: Remove `PRODUCT` from `web/lib/constants.js`**
-
-This is the last remaining consumer of `PRODUCT` (Task 7 already moved `orders.js`
-off it without touching `constants.js`; Task 8 already moved `mercadopago.js` off
-it) — safe to remove now. Rewrite `web/lib/constants.js` to:
-
-```js
-export const TERMINAL_PAYMENT_STATUSES = new Set([
-  'approved',
-  'authorized',
-  'rejected',
-  'cancelled',
-  'refunded',
-  'charged_back'
-]);
-
-export const CONFIRMED_PAYMENT_STATUS = 'approved';
-
-export const SESSION_TTL_SECONDS = Object.freeze({
-  admin: 7 * 24 * 60 * 60,
-  client: 30 * 24 * 60 * 60
-});
-
-export const MAGIC_LINK_TTL_SECONDS = 30 * 60;
-```
-
-Before making this change, run `grep -rn "PRODUCT\b" web/lib web/app` (excluding
-`node_modules`) to confirm no file other than `constants.js` itself still
-references `PRODUCT` — if anything unexpected still does, stop and report back
-rather than deleting the export out from under it.
-
-- [ ] **Step 4: Run the full test suite**
+- [ ] **Step 3: Run the full test suite**
 
 Run: `cd web && npx vitest run`
-Expected: all tests pass.
+Expected: all tests pass. `web/app/api/config/route.js` still imports `PRODUCT`
+from `constants.js` at this point — that's fine and expected, since this task
+doesn't touch `constants.js` at all (Task 11 does).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add web/lib/email.js web/lib/constants.js web/tests/email.test.mjs
-git commit -m "refactor(web): read SMTP config and product access URL from settings in email.js, drop unused PRODUCT constant"
+git add web/lib/email.js web/tests/email.test.mjs
+git commit -m "refactor(web): read SMTP config and product access URL from settings in email.js"
 ```
 
 ---
@@ -1533,16 +1507,20 @@ git commit -m "refactor(web): make publicOrder async, read product access URL fr
 
 ---
 
-### Task 11: Refactor `web/app/api/config/route.js`
+### Task 11: Refactor `web/app/api/config/route.js`, remove unused `PRODUCT` constant
 
 **Files:**
 - Modify: `web/app/api/config/route.js`
+- Modify: `web/lib/constants.js`
 
 **Interfaces:**
 - Consumes: `getMercadoPagoSettings`, `getProductSettings` (`web/lib/settings.js`, Task 4).
 - Produces: same JSON response shape as before (`mercadoPagoPublicKey`, `product.title`,
   `product.amountCents`, `product.currency`, `polling`) — no change for the frontend
-  `checkout.js` consumer.
+  `checkout.js` consumer. `web/lib/constants.js` no longer exports `PRODUCT` after this
+  task — this route is the true last consumer (Tasks 7, 8, 9 already stopped using it
+  in `orders.js`/`mercadopago.js`/`email.js`, in that order, without touching
+  `constants.js` itself, precisely so this task could be the one safe place to remove it).
 
 - [ ] **Step 1: Rewrite the route**
 
@@ -1577,16 +1555,44 @@ export async function GET() {
 }
 ```
 
-- [ ] **Step 2: Run the full test suite**
+- [ ] **Step 2: Remove `PRODUCT` from `web/lib/constants.js`**
+
+Before making this change, run `grep -rn "PRODUCT\b" web/lib web/app` (excluding
+`node_modules`) to confirm no file other than `constants.js` itself still
+references `PRODUCT` — if anything unexpected still does, stop and report back
+rather than deleting the export out from under it. Then rewrite
+`web/lib/constants.js` to:
+
+```js
+export const TERMINAL_PAYMENT_STATUSES = new Set([
+  'approved',
+  'authorized',
+  'rejected',
+  'cancelled',
+  'refunded',
+  'charged_back'
+]);
+
+export const CONFIRMED_PAYMENT_STATUS = 'approved';
+
+export const SESSION_TTL_SECONDS = Object.freeze({
+  admin: 7 * 24 * 60 * 60,
+  client: 30 * 24 * 60 * 60
+});
+
+export const MAGIC_LINK_TTL_SECONDS = 30 * 60;
+```
+
+- [ ] **Step 3: Run the full test suite**
 
 Run: `cd web && npx vitest run`
 Expected: all tests pass.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add web/app/api/config/route.js
-git commit -m "refactor(web): read public config from settings instead of env.js/constants.js"
+git add web/app/api/config/route.js web/lib/constants.js
+git commit -m "refactor(web): read public config from settings, drop unused PRODUCT constant"
 ```
 
 ---
@@ -2174,13 +2180,15 @@ ssh -i "$VPS_SSH_KEY" "$VPS_HOST" "cd /opt/xadrez-essencial/src && git pull"
   only caller (`processEmailOutbox`, same file) and its only test file are both
   updated in the same task, so no other task depends on the old two-positional-arg
   shape.
-- `PRODUCT` (constants.js) removal is deliberately sequenced: Task 7 (`orders.js`)
-  and Task 8 (`mercadopago.js`) each stop *using* `PRODUCT` without touching
-  `constants.js` itself, since `web/lib/email.js` (and its test) still depend on
-  it until Task 9 — which is the only task that both finishes migrating the last
-  consumer and removes the export, in the same commit. This avoids the broken
-  window a naive "remove it as soon as its first consumer is fixed" ordering
-  would have created.
+- `PRODUCT` (constants.js) removal is deliberately sequenced: Tasks 7 (`orders.js`),
+  8 (`mercadopago.js`), and 9 (`email.js`) each stop *using* `PRODUCT` without
+  touching `constants.js` itself, since `web/app/api/config/route.js` still
+  depends on it until Task 11 — the true last consumer in task order, and the
+  only task that both finishes the migration and removes the export, in the same
+  commit. (This ordering bug — removing the export before its last consumer was
+  migrated — was caught twice during this plan's pre-execution review, once
+  pointing at Task 9 as the "last" consumer when Task 11 actually came after it;
+  fixed before any implementer was dispatched.)
 - Out of scope, unchanged from the spec: `DATABASE_URL`/`APP_BASE_URL`/
   `CRON_SECRET`/`SETTINGS_ENCRYPTION_KEY` stay `.env`-only; no encryption-key
   rotation tooling; no dashboard metrics beyond sales.
