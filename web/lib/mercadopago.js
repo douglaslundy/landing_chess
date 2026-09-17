@@ -1,16 +1,16 @@
 import { serverConfig } from './env.js';
-import { PRODUCT } from './constants.js';
+import { getMercadoPagoSettings } from './settings.js';
 
 export function amountFromCents(cents) {
   return Number((cents / 100).toFixed(2));
 }
 
 async function mercadoPagoRequest(path, options = {}) {
-  const { mercadoPagoAccessToken } = serverConfig();
+  const { accessToken } = await getMercadoPagoSettings();
   const response = await fetch(`https://api.mercadopago.com${path}`, {
     ...options,
     headers: {
-      Authorization: `Bearer ${mercadoPagoAccessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
       ...(options.headers || {})
     }
@@ -29,13 +29,13 @@ async function mercadoPagoRequest(path, options = {}) {
 export async function createPayment({ order, attempt, payment }) {
   const { appBaseUrl } = serverConfig();
   const body = {
-    transaction_amount: amountFromCents(PRODUCT.amountCents),
-    description: PRODUCT.description,
+    transaction_amount: amountFromCents(order.amount_cents),
+    description: order.product_description || order.product_title,
     external_reference: order.id,
     notification_url: `${appBaseUrl}/api/mercadopago/webhook`,
     metadata: {
       order_id: order.id,
-      product_code: PRODUCT.code,
+      product_code: order.product_code,
       attempt_id: attempt.id
     },
     payer: {
