@@ -1,5 +1,6 @@
 import { query } from './db.js';
 import { encryptValue, decryptValue } from './settingsCrypto.js';
+import { required, optional } from './env.js';
 
 const SETTING_DEFS = {
   product_title: { encrypted: false },
@@ -55,4 +56,59 @@ export async function getAllSettingsForAdmin() {
     }
   }
   return output;
+}
+
+export async function getProductSettings() {
+  const [title, description, amountCents, currency] = await Promise.all([
+    getSetting('product_title'),
+    getSetting('product_description'),
+    getSetting('product_amount_cents'),
+    getSetting('product_currency')
+  ]);
+  return {
+    code: 'xadrez-essencial-pdf',
+    title: title || 'Xadrez Essencial',
+    description: description || 'Livro digital Xadrez Essencial, 10 volumes em PDF',
+    amountCents: Number(amountCents || 3990),
+    currency: currency || 'BRL'
+  };
+}
+
+export async function getMercadoPagoSettings() {
+  const [publicKey, accessToken, webhookSecret] = await Promise.all([
+    getSetting('mercadopago_public_key'),
+    getSetting('mercadopago_access_token'),
+    getSetting('mercadopago_webhook_secret')
+  ]);
+  return {
+    publicKey: publicKey || required('MERCADOPAGO_PUBLIC_KEY'),
+    accessToken: accessToken || required('MERCADOPAGO_ACCESS_TOKEN'),
+    webhookSecret: webhookSecret || optional('MERCADOPAGO_WEBHOOK_SECRET')
+  };
+}
+
+export async function getSmtpSettings() {
+  const [host, port, secure, user, password, from, replyTo] = await Promise.all([
+    getSetting('smtp_host'),
+    getSetting('smtp_port'),
+    getSetting('smtp_secure'),
+    getSetting('smtp_user'),
+    getSetting('smtp_password'),
+    getSetting('email_from'),
+    getSetting('email_reply_to')
+  ]);
+  return {
+    host: host || required('SMTP_HOST'),
+    port: Number(port || required('SMTP_PORT')),
+    secure: secure !== null ? secure === 'true' : String(required('SMTP_SECURE')).toLowerCase() === 'true',
+    user: user || required('SMTP_USER'),
+    password: password || required('SMTP_PASSWORD'),
+    from: from || required('EMAIL_FROM'),
+    replyTo: replyTo || optional('EMAIL_REPLY_TO')
+  };
+}
+
+export async function getProductAccessUrl() {
+  const url = await getSetting('product_access_url');
+  return url || required('PRODUCT_ACCESS_URL');
 }
