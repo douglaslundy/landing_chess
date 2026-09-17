@@ -8,20 +8,28 @@ const SETTING_DEFS = {
   product_amount_cents: { encrypted: false },
   product_currency: { encrypted: false },
   mercadopago_public_key: { encrypted: false },
-  mercadopago_access_token: { encrypted: true },
-  mercadopago_webhook_secret: { encrypted: true },
+  mercadopago_access_token: { encrypted: true, masked: true },
+  mercadopago_webhook_secret: { encrypted: true, masked: true },
   smtp_host: { encrypted: false },
   smtp_port: { encrypted: false },
   smtp_secure: { encrypted: false },
   smtp_user: { encrypted: false },
-  smtp_password: { encrypted: true },
+  smtp_password: { encrypted: true, masked: true },
   email_from: { encrypted: false },
   email_reply_to: { encrypted: false },
-  product_access_url: { encrypted: true }
+  // Stored encrypted (protects it in a DB dump/backup), but not masked in
+  // the admin UI: only an already-authenticated admin ever sees this
+  // response, and unlike a payment credential there's no value in hiding
+  // it from the one person allowed to read/edit it.
+  product_access_url: { encrypted: true, masked: false }
 };
 
 export function isEncryptedSetting(key) {
   return Boolean(SETTING_DEFS[key]?.encrypted);
+}
+
+export function isMaskedSetting(key) {
+  return Boolean(SETTING_DEFS[key]?.masked);
 }
 
 export async function getSetting(key) {
@@ -49,8 +57,10 @@ export async function getAllSettingsForAdmin() {
   const output = {};
   for (const [key, def] of Object.entries(SETTING_DEFS)) {
     const row = rows.get(key);
-    if (def.encrypted) {
+    if (def.masked) {
       output[key] = { configured: Boolean(row) };
+    } else if (def.encrypted) {
+      output[key] = row ? decryptValue(row.value) : null;
     } else {
       output[key] = row ? row.value : null;
     }

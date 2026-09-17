@@ -263,6 +263,8 @@
     .field label { font-weight: 800; font-size: .9rem; }
     .field input, .field select, .mp-field { width: 100%; min-height: 46px; border-radius: 10px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.045); color: var(--text); padding: 10px 12px; font: inherit; }
     .field input::placeholder { color: #8f8a84; }
+    .field select { color-scheme: dark; background-color: #17171c; }
+    .field select option { background-color: #17171c; color: var(--text); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .method-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px 0; }
     .method-tab { min-height: 48px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.04); color: var(--text); font-weight: 900; cursor: pointer; }
@@ -571,7 +573,7 @@
             <div class="field-row">
               <div class="field">
                 <label for="doc-type">Documento</label>
-                <select id="doc-type" name="documentType"><option value="">Selecionar no pagamento</option><option value="CPF">CPF</option><option value="CNPJ">CNPJ</option></select>
+                <select id="doc-type" name="documentType"><option value="CPF" selected>CPF</option><option value="CNPJ">CNPJ</option><option value="">Selecionar no pagamento</option></select>
               </div>
               <div class="field">
                 <label for="doc-number">Numero do documento</label>

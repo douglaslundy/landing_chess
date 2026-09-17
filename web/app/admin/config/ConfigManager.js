@@ -19,11 +19,15 @@ const EMPTY_FORM = {
   product_access_url: ''
 };
 
-const ENCRYPTED_KEYS = new Set([
+// Fields the admin API never echoes back in plain text — the input stays
+// blank after loading, and a blank submit means "keep the current value".
+// product_access_url is stored encrypted too, but the admin API DOES
+// return its real value (only an authenticated admin can read it), so it's
+// a normal visible field and isn't in this set.
+const MASKED_KEYS = new Set([
   'mercadopago_access_token',
   'mercadopago_webhook_secret',
-  'smtp_password',
-  'product_access_url'
+  'smtp_password'
 ]);
 
 function ConfiguredBadge({ ok }) {
@@ -48,7 +52,7 @@ export default function ConfigManager() {
     const nextForm = { ...EMPTY_FORM };
     const nextConfigured = {};
     for (const [key, value] of Object.entries(body.settings)) {
-      if (ENCRYPTED_KEYS.has(key)) {
+      if (MASKED_KEYS.has(key)) {
         nextConfigured[key] = value?.configured || false;
       } else if (value !== null && value !== undefined) {
         if (key === 'smtp_secure') {
@@ -79,7 +83,7 @@ export default function ConfigManager() {
     setMessage(null);
     const payload = {};
     for (const key of Object.keys(EMPTY_FORM)) {
-      if (ENCRYPTED_KEYS.has(key)) {
+      if (MASKED_KEYS.has(key)) {
         if (form[key]) payload[key] = form[key];
       } else if (form[key] !== original[key]) {
         payload[key] = form[key];
@@ -304,13 +308,13 @@ export default function ConfigManager() {
             <h2 className="admin-subtitle">Acesso ao produto</h2>
           </div>
           <label className="admin-field">
-            URL de acesso <ConfiguredBadge ok={configured.product_access_url} />
+            URL de acesso
             <input
               className="admin-input"
-              type="password"
+              type="text"
               value={form.product_access_url}
               onChange={(e) => updateField('product_access_url', e.target.value)}
-              placeholder="Deixe em branco para manter a atual"
+              placeholder="ex.: https://drive.google.com/... ou link do produto"
             />
           </label>
         </section>

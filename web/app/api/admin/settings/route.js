@@ -4,7 +4,7 @@ import { resolveSession } from '../../../../lib/auth/guard.js';
 import { logAdminAction } from '../../../../lib/auth/accessLog.js';
 import { ADMIN_COOKIE } from '../../../../lib/auth/cookies.js';
 import { settingsUpdateSchema } from '../../../../lib/schemas.js';
-import { getAllSettingsForAdmin, setSetting, isEncryptedSetting } from '../../../../lib/settings.js';
+import { getAllSettingsForAdmin, setSetting, isMaskedSetting } from '../../../../lib/settings.js';
 
 export async function GET(request) {
   const token = request.cookies.get(ADMIN_COOKIE)?.value || null;
@@ -32,7 +32,7 @@ export async function PATCH(request) {
 
     const changedKeys = Object.keys(data).filter((key) => {
       if (data[key] === undefined) return false;
-      if (isEncryptedSetting(key) && data[key] === '') return false;
+      if (isMaskedSetting(key) && data[key] === '') return false;
       return true;
     });
     for (const key of changedKeys) {

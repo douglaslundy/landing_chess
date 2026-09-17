@@ -12,7 +12,7 @@ const VALID_KEY = Buffer.alloc(32, 7).toString('base64');
 
 const { resetPoolForTests } = await import('../lib/db.js');
 const { encryptValue } = await import('../lib/settingsCrypto.js');
-const { getSetting, setSetting, getAllSettingsForAdmin, isEncryptedSetting } = await import('../lib/settings.js');
+const { getSetting, setSetting, getAllSettingsForAdmin, isEncryptedSetting, isMaskedSetting } = await import('../lib/settings.js');
 
 describe('settings store', () => {
   beforeEach(() => {
@@ -69,7 +69,18 @@ describe('settings store', () => {
     expect(isEncryptedSetting('product_title')).toBe(false);
   });
 
-  it('getAllSettingsForAdmin masks encrypted fields as configured booleans', async () => {
+  it('reports whether a key is masked in the admin UI (distinct from encrypted-at-rest)', () => {
+    expect(isMaskedSetting('smtp_password')).toBe(true);
+    expect(isMaskedSetting('mercadopago_access_token')).toBe(true);
+    // product_access_url is encrypted at rest but NOT masked: the admin
+    // API is only ever readable by an authenticated admin, so there is
+    // no reason to hide it from the one person allowed to see/edit it.
+    expect(isEncryptedSetting('product_access_url')).toBe(true);
+    expect(isMaskedSetting('product_access_url')).toBe(false);
+    expect(isMaskedSetting('product_title')).toBe(false);
+  });
+
+  it('getAllSettingsForAdmin masks only masked fields as configured booleans', async () => {
     queryMock.mockResolvedValueOnce({
       rows: [
         { key: 'product_title', value: 'Xadrez Essencial', encrypted: false },
@@ -80,6 +91,23 @@ describe('settings store', () => {
     expect(settings.product_title).toBe('Xadrez Essencial');
     expect(settings.mercadopago_access_token).toEqual({ configured: true });
     expect(settings.mercadopago_webhook_secret).toEqual({ configured: false });
+  });
+
+  it('getAllSettingsForAdmin decrypts and returns product_access_url in plain text (encrypted but not masked)', async () => {
+    const stored = encryptValue('https://drive.example.com/produto');
+    queryMock.mockResolvedValueOnce({
+      rows: [
+        { key: 'product_access_url', value: stored, encrypted: true }
+      ]
+    });
+    const settings = await getAllSettingsForAdmin();
+    expect(settings.product_access_url).toBe('https://drive.example.com/produto');
+  });
+
+  it('getAllSettingsForAdmin returns null for product_access_url when no row exists', async () => {
+    queryMock.mockResolvedValueOnce({ rows: [] });
+    const settings = await getAllSettingsForAdmin();
+    expect(settings.product_access_url).toBeNull();
   });
 });
 
