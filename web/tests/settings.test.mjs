@@ -138,6 +138,20 @@ describe('grouped settings getters (DB-first, env fallback)', () => {
     expect(mp).toEqual({ publicKey: 'TEST-public', accessToken: 'TEST-token', webhookSecret: undefined });
   });
 
+  it('getMercadoPagoSettings.publicKey resolves without requiring accessToken to be configured', async () => {
+    process.env.MERCADOPAGO_PUBLIC_KEY = 'TEST-public';
+    queryMock
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] });
+
+    const { getMercadoPagoSettings } = await import('../lib/settings.js');
+    const mp = await getMercadoPagoSettings();
+
+    expect(mp.publicKey).toBe('TEST-public');
+    expect(() => mp.accessToken).toThrow('MERCADOPAGO_ACCESS_TOKEN');
+  });
+
   it('getSmtpSettings falls back to env vars when the DB has no rows', async () => {
     process.env.SMTP_HOST = 'smtp.example.com';
     process.env.SMTP_PORT = '587';

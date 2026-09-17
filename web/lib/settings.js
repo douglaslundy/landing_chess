@@ -81,9 +81,15 @@ export async function getMercadoPagoSettings() {
     getSetting('mercadopago_webhook_secret')
   ]);
   return {
-    publicKey: publicKey || required('MERCADOPAGO_PUBLIC_KEY'),
-    accessToken: accessToken || required('MERCADOPAGO_ACCESS_TOKEN'),
-    webhookSecret: webhookSecret || optional('MERCADOPAGO_WEBHOOK_SECRET')
+    get publicKey() {
+      return publicKey || required('MERCADOPAGO_PUBLIC_KEY');
+    },
+    get accessToken() {
+      return accessToken || required('MERCADOPAGO_ACCESS_TOKEN');
+    },
+    get webhookSecret() {
+      return webhookSecret || optional('MERCADOPAGO_WEBHOOK_SECRET');
+    }
   };
 }
 
