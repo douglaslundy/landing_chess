@@ -26,6 +26,12 @@ const ENCRYPTED_KEYS = new Set([
   'product_access_url'
 ]);
 
+function ConfiguredBadge({ ok }) {
+  return ok
+    ? <span className="admin-badge admin-badge--ok">configurado ✓</span>
+    : <span className="admin-badge admin-badge--pending">não configurado</span>;
+}
+
 export default function ConfigManager() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [original, setOriginal] = useState(EMPTY_FORM);
@@ -91,81 +97,173 @@ export default function ConfigManager() {
   }
 
   return (
-    <main style={{ padding: 32, fontFamily: 'sans-serif', maxWidth: 720 }}>
-      <h1>Configurações</h1>
+    <>
+      <h1 className="admin-title">Configurações</h1>
+
       <form onSubmit={handleSubmit}>
-        <h2>Produto</h2>
-        <label>
-          Título
-          <input value={form.product_title} onChange={(e) => updateField('product_title', e.target.value)} required />
-        </label>
-        <label>
-          Descrição
-          <textarea value={form.product_description} onChange={(e) => updateField('product_description', e.target.value)} />
-        </label>
-        <label>
-          Preço (em centavos, ex: 3990 = R$ 39,90)
-          <input type="number" value={form.product_amount_cents} onChange={(e) => updateField('product_amount_cents', e.target.value)} required />
-        </label>
-        <label>
-          Moeda
-          <input value={form.product_currency} onChange={(e) => updateField('product_currency', e.target.value)} required />
-        </label>
+        <section className="admin-card">
+          <div className="admin-card-head">
+            <h2 className="admin-subtitle">Produto</h2>
+          </div>
+          <label className="admin-field">
+            Título
+            <input
+              className="admin-input"
+              value={form.product_title}
+              onChange={(e) => updateField('product_title', e.target.value)}
+              required
+            />
+          </label>
+          <label className="admin-field">
+            Descrição
+            <textarea
+              className="admin-input"
+              value={form.product_description}
+              onChange={(e) => updateField('product_description', e.target.value)}
+            />
+          </label>
+          <label className="admin-field">
+            Preço <span className="admin-field-hint">(em centavos, ex: 3990 = R$ 39,90)</span>
+            <input
+              className="admin-input"
+              type="number"
+              value={form.product_amount_cents}
+              onChange={(e) => updateField('product_amount_cents', e.target.value)}
+              required
+            />
+          </label>
+          <label className="admin-field">
+            Moeda
+            <input
+              className="admin-input"
+              value={form.product_currency}
+              onChange={(e) => updateField('product_currency', e.target.value)}
+              required
+            />
+          </label>
+        </section>
 
-        <h2>Mercado Pago</h2>
-        <label>
-          Chave pública
-          <input value={form.mercadopago_public_key} onChange={(e) => updateField('mercadopago_public_key', e.target.value)} />
-        </label>
-        <label>
-          Access token {configured.mercadopago_access_token ? '(configurado ✓)' : '(não configurado)'}
-          <input type="password" value={form.mercadopago_access_token} onChange={(e) => updateField('mercadopago_access_token', e.target.value)} placeholder="Deixe em branco para manter o atual" />
-        </label>
-        <label>
-          Webhook secret {configured.mercadopago_webhook_secret ? '(configurado ✓)' : '(não configurado)'}
-          <input type="password" value={form.mercadopago_webhook_secret} onChange={(e) => updateField('mercadopago_webhook_secret', e.target.value)} placeholder="Deixe em branco para manter o atual" />
-        </label>
+        <section className="admin-card">
+          <div className="admin-card-head">
+            <h2 className="admin-subtitle">Mercado Pago</h2>
+          </div>
+          <label className="admin-field">
+            Chave pública
+            <input
+              className="admin-input"
+              value={form.mercadopago_public_key}
+              onChange={(e) => updateField('mercadopago_public_key', e.target.value)}
+            />
+          </label>
+          <label className="admin-field">
+            Access token <ConfiguredBadge ok={configured.mercadopago_access_token} />
+            <input
+              className="admin-input"
+              type="password"
+              value={form.mercadopago_access_token}
+              onChange={(e) => updateField('mercadopago_access_token', e.target.value)}
+              placeholder="Deixe em branco para manter o atual"
+            />
+          </label>
+          <label className="admin-field">
+            Webhook secret <ConfiguredBadge ok={configured.mercadopago_webhook_secret} />
+            <input
+              className="admin-input"
+              type="password"
+              value={form.mercadopago_webhook_secret}
+              onChange={(e) => updateField('mercadopago_webhook_secret', e.target.value)}
+              placeholder="Deixe em branco para manter o atual"
+            />
+          </label>
+        </section>
 
-        <h2>E-mail (SMTP)</h2>
-        <label>
-          Host
-          <input value={form.smtp_host} onChange={(e) => updateField('smtp_host', e.target.value)} />
-        </label>
-        <label>
-          Porta
-          <input type="number" value={form.smtp_port} onChange={(e) => updateField('smtp_port', e.target.value)} />
-        </label>
-        <label>
-          <input type="checkbox" checked={form.smtp_secure} onChange={(e) => updateField('smtp_secure', e.target.checked)} />
-          Conexão segura (TLS)
-        </label>
-        <label>
-          Usuário
-          <input value={form.smtp_user} onChange={(e) => updateField('smtp_user', e.target.value)} />
-        </label>
-        <label>
-          Senha {configured.smtp_password ? '(configurada ✓)' : '(não configurada)'}
-          <input type="password" value={form.smtp_password} onChange={(e) => updateField('smtp_password', e.target.value)} placeholder="Deixe em branco para manter a atual" />
-        </label>
-        <label>
-          Remetente
-          <input value={form.email_from} onChange={(e) => updateField('email_from', e.target.value)} />
-        </label>
-        <label>
-          Responder para
-          <input value={form.email_reply_to} onChange={(e) => updateField('email_reply_to', e.target.value)} />
-        </label>
+        <section className="admin-card">
+          <div className="admin-card-head">
+            <h2 className="admin-subtitle">E-mail (SMTP)</h2>
+          </div>
+          <label className="admin-field">
+            Host
+            <input
+              className="admin-input"
+              value={form.smtp_host}
+              onChange={(e) => updateField('smtp_host', e.target.value)}
+            />
+          </label>
+          <label className="admin-field">
+            Porta
+            <input
+              className="admin-input"
+              type="number"
+              value={form.smtp_port}
+              onChange={(e) => updateField('smtp_port', e.target.value)}
+            />
+          </label>
+          <label className="admin-checkbox-field">
+            <input
+              type="checkbox"
+              checked={form.smtp_secure}
+              onChange={(e) => updateField('smtp_secure', e.target.checked)}
+            />
+            Conexão segura (TLS)
+          </label>
+          <label className="admin-field">
+            Usuário
+            <input
+              className="admin-input"
+              value={form.smtp_user}
+              onChange={(e) => updateField('smtp_user', e.target.value)}
+            />
+          </label>
+          <label className="admin-field">
+            Senha <ConfiguredBadge ok={configured.smtp_password} />
+            <input
+              className="admin-input"
+              type="password"
+              value={form.smtp_password}
+              onChange={(e) => updateField('smtp_password', e.target.value)}
+              placeholder="Deixe em branco para manter a atual"
+            />
+          </label>
+          <label className="admin-field">
+            Remetente
+            <input
+              className="admin-input"
+              value={form.email_from}
+              onChange={(e) => updateField('email_from', e.target.value)}
+            />
+          </label>
+          <label className="admin-field">
+            Responder para
+            <input
+              className="admin-input"
+              value={form.email_reply_to}
+              onChange={(e) => updateField('email_reply_to', e.target.value)}
+            />
+          </label>
+        </section>
 
-        <h2>Acesso ao produto</h2>
-        <label>
-          URL de acesso {configured.product_access_url ? '(configurada ✓)' : '(não configurada)'}
-          <input type="password" value={form.product_access_url} onChange={(e) => updateField('product_access_url', e.target.value)} placeholder="Deixe em branco para manter a atual" />
-        </label>
+        <section className="admin-card">
+          <div className="admin-card-head">
+            <h2 className="admin-subtitle">Acesso ao produto</h2>
+          </div>
+          <label className="admin-field">
+            URL de acesso <ConfiguredBadge ok={configured.product_access_url} />
+            <input
+              className="admin-input"
+              type="password"
+              value={form.product_access_url}
+              onChange={(e) => updateField('product_access_url', e.target.value)}
+              placeholder="Deixe em branco para manter a atual"
+            />
+          </label>
+        </section>
 
-        {error && <p role="alert">{error}</p>}
-        {message && <p>{message}</p>}
-        <button type="submit">Salvar</button>
+        {error && <p className="admin-alert admin-alert--error" role="alert">{error}</p>}
+        {message && <p className="admin-alert admin-alert--success">{message}</p>}
+        <div className="admin-btn-row">
+          <button type="submit" className="admin-btn">Salvar</button>
+        </div>
       </form>
-    </main>
+    </>
   );
 }

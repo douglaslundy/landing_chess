@@ -63,63 +63,104 @@ export default function AulasManager() {
   }
 
   return (
-    <main style={{ padding: 32, fontFamily: 'sans-serif', maxWidth: 720 }}>
-      <h1>Aulas</h1>
+    <>
+      <h1 className="admin-title">Aulas</h1>
 
-      <form onSubmit={handleSubmit}>
-        <h2>{editingId ? 'Editar aula' : 'Nova aula'}</h2>
-        <label>
-          Título
-          <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-        </label>
-        <label>
-          Descrição
-          <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-        </label>
-        <label>
-          Tipo
-          <select value={form.contentType} onChange={(e) => setForm({ ...form, contentType: e.target.value })}>
-            <option value="pdf">PDF</option>
-            <option value="video">Vídeo</option>
-          </select>
-        </label>
-        <label>
-          URL
-          <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} required />
-        </label>
-        <label>
-          Posição
-          <input
-            type="number"
-            value={form.position}
-            onChange={(e) => setForm({ ...form, position: e.target.value })}
-            required
-          />
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={form.published}
-            onChange={(e) => setForm({ ...form, published: e.target.checked })}
-          />
-          Publicada
-        </label>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit">{editingId ? 'Salvar' : 'Criar'}</button>
-        {editingId && <button type="button" onClick={cancelEdit}>Cancelar</button>}
-      </form>
+      <section className="admin-card">
+        <div className="admin-card-head">
+          <h2 className="admin-subtitle">{editingId ? 'Editar aula' : 'Nova aula'}</h2>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <label className="admin-field">
+            Título
+            <input
+              className="admin-input"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              required
+            />
+          </label>
+          <label className="admin-field">
+            Descrição
+            <textarea
+              className="admin-input"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+          </label>
+          <label className="admin-field">
+            Tipo
+            <select
+              className="admin-input"
+              value={form.contentType}
+              onChange={(e) => setForm({ ...form, contentType: e.target.value })}
+            >
+              <option value="pdf">PDF</option>
+              <option value="video">Vídeo</option>
+            </select>
+          </label>
+          <label className="admin-field">
+            URL
+            <input
+              className="admin-input"
+              value={form.url}
+              onChange={(e) => setForm({ ...form, url: e.target.value })}
+              required
+            />
+          </label>
+          <label className="admin-field">
+            Posição
+            <input
+              className="admin-input"
+              type="number"
+              value={form.position}
+              onChange={(e) => setForm({ ...form, position: e.target.value })}
+              required
+            />
+          </label>
+          <label className="admin-checkbox-field">
+            <input
+              type="checkbox"
+              checked={form.published}
+              onChange={(e) => setForm({ ...form, published: e.target.checked })}
+            />
+            Publicada
+          </label>
+          {error && <p className="admin-alert admin-alert--error" role="alert">{error}</p>}
+          <div className="admin-btn-row">
+            <button type="submit" className="admin-btn">{editingId ? 'Salvar' : 'Criar'}</button>
+            {editingId && (
+              <button type="button" className="admin-btn admin-btn-ghost" onClick={cancelEdit}>Cancelar</button>
+            )}
+          </div>
+        </form>
+      </section>
 
-      <h2>Lista</h2>
-      <ul>
-        {lessons.map((lesson) => (
-          <li key={lesson.id}>
-            <strong>{lesson.position}</strong> — {lesson.title} ({lesson.content_type}
-            {lesson.published ? '' : ', rascunho'})
-            <button type="button" onClick={() => startEdit(lesson)}>Editar</button>
-            <button type="button" onClick={() => handleDelete(lesson.id)}>Excluir</button>
-          </li>
-        ))}
-      </ul>
-    </main>
+      <section className="admin-card">
+        <div className="admin-card-head">
+          <h2 className="admin-subtitle">Lista</h2>
+        </div>
+        {lessons.length ? (
+          <ul className="admin-list">
+            {lessons.map((lesson) => (
+              <li className="admin-list-item" key={lesson.id}>
+                <div className="admin-list-item-info">
+                  <span className="admin-list-item-position">{lesson.position}</span>
+                  <span>{lesson.title}</span>
+                  <span className="admin-list-item-meta">{lesson.content_type}</span>
+                  {!lesson.published && <span className="admin-badge admin-badge--draft">rascunho</span>}
+                </div>
+                <div className="admin-btn-row" style={{ margin: 0 }}>
+                  <button type="button" className="admin-btn admin-btn-ghost admin-btn-small" onClick={() => startEdit(lesson)}>Editar</button>
+                  <button type="button" className="admin-btn admin-btn-ghost admin-btn-small" onClick={() => handleDelete(lesson.id)}>Excluir</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="admin-empty">Nenhuma aula cadastrada ainda.</p>
+        )}
+      </section>
+    </>
   );
 }

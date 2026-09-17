@@ -22,20 +22,42 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main style={{ padding: 32, fontFamily: 'sans-serif', maxWidth: 360 }}>
-      <h1>Login admin</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          E-mail
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </label>
-        <label>
-          Senha
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit">Entrar</button>
-      </form>
-    </main>
+    <div className="admin-shell admin-shell--narrow">
+      <div className="admin-brand" style={{ textAlign: 'center', marginBottom: 28 }}>
+        Xadrez <span>Essencial</span> — Admin
+      </div>
+      <section className="admin-card">
+        <div className="admin-card-head">
+          <h1 className="admin-subtitle" style={{ fontSize: '1.6rem' }}>Login</h1>
+          <p>Acesse o painel administrativo.</p>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <label className="admin-field">
+            E-mail
+            <input
+              className="admin-input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+          <label className="admin-field">
+            Senha
+            <input
+              className="admin-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+          {error && <p className="admin-alert admin-alert--error" role="alert">{error}</p>}
+          <div className="admin-btn-row">
+            <button type="submit" className="admin-btn">Entrar</button>
+          </div>
+        </form>
+      </section>
+    </div>
   );
 }
