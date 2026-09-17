@@ -1,28 +1,31 @@
 import crypto from 'node:crypto';
 import { withTransaction, query } from './db.js';
-import { PRODUCT, CONFIRMED_PAYMENT_STATUS } from './constants.js';
+import { CONFIRMED_PAYMENT_STATUS } from './constants.js';
+import { getProductSettings } from './settings.js';
 
 function uuid() {
   return crypto.randomUUID();
 }
 
 export async function createOrder({ buyerName, buyerEmail, documentType, documentNumber }) {
+  const product = await getProductSettings();
   const result = await query(
     `
     insert into orders (
-      id, public_token, product_code, product_title, amount_cents, currency,
+      id, public_token, product_code, product_title, product_description, amount_cents, currency,
       buyer_name, buyer_email, document_type, document_number, status
     )
-    values ($1, $2, $3, $4, $5, $6, $7, lower($8), $9, $10, 'created')
+    values ($1, $2, $3, $4, $5, $6, $7, $8, lower($9), $10, $11, 'created')
     returning *
     `,
     [
       uuid(),
       crypto.randomBytes(32).toString('hex'),
-      PRODUCT.code,
-      PRODUCT.title,
-      PRODUCT.amountCents,
-      PRODUCT.currency,
+      product.code,
+      product.title,
+      product.description,
+      product.amountCents,
+      product.currency,
       buyerName,
       buyerEmail,
       documentType || null,
@@ -108,7 +111,7 @@ export async function updateAttemptFromPayment(attemptId, payment) {
       payment.status,
       payment.status_detail || null,
       String(payment.transaction_amount || 0),
-      payment.currency_id || PRODUCT.currency,
+      payment.currency_id || 'BRL',
       pix.qr_code || null,
       pix.qr_code_base64 || null,
       pix.ticket_url || null,
@@ -144,7 +147,7 @@ export async function applyOfficialPayment(payment) {
     if (
       order.amount_cents !== amountCents ||
       order.currency !== payment.currency_id ||
-      payment.metadata?.product_code !== PRODUCT.code ||
+      payment.metadata?.product_code !== order.product_code ||
       !receiverOk
     ) {
       await client.query(
