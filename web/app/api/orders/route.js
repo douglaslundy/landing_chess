@@ -15,7 +15,7 @@ export async function GET(request) {
     const order = await getOrderByToken(parsed.orderToken);
     if (!order) return NextResponse.json({ error: 'order_not_found' }, { status: 404 });
     const attempt = await getLatestAttempt(order.id);
-    return NextResponse.json(publicOrder(order, attempt));
+    return NextResponse.json(await publicOrder(order, attempt));
   } catch (error) {
     if (error.name === 'ZodError') {
       return NextResponse.json({ error: 'invalid_input', details: error.issues }, { status: 400 });
@@ -39,7 +39,7 @@ export async function POST(request) {
     }
     const body = createOrderSchema.parse(raw);
     const order = await createOrder(body);
-    return NextResponse.json(publicOrder(order, null), { status: 201 });
+    return NextResponse.json(await publicOrder(order, null), { status: 201 });
   } catch (error) {
     if (error.name === 'ZodError') {
       return NextResponse.json({ error: 'invalid_input', details: error.issues }, { status: 400 });

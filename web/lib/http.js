@@ -1,3 +1,5 @@
+import { getProductAccessUrl } from './settings.js';
+
 export function getClientIp(request) {
   // Domain is Cloudflare-proxied; Traefik has no forwardedHeaders.trustedIPs
   // configured, so X-Forwarded-For gets overwritten with Cloudflare's edge
@@ -10,7 +12,8 @@ export function getClientIp(request) {
   return 'unknown';
 }
 
-export function publicOrder(order, attempt) {
+export async function publicOrder(order, attempt) {
+  const accessUrl = order.status === 'paid' ? await getProductAccessUrl() : null;
   return {
     token: order.public_token,
     status: order.status,
@@ -33,7 +36,6 @@ export function publicOrder(order, attempt) {
     confirmedAt: order.payment_confirmed_at,
     emailStatus: order.email_status || 'not_queued',
     emailSentAt: order.email_sent_at,
-    // The product URL is server-only until the payment is officially confirmed.
-    accessUrl: order.status === 'paid' ? process.env.PRODUCT_ACCESS_URL || null : null
+    accessUrl
   };
 }
