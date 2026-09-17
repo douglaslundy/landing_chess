@@ -267,6 +267,7 @@
     .field select { color-scheme: dark; background-color: #17171c; }
     .field select option { background-color: #17171c; color: var(--text); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-row-auto { display: none; }
     .method-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px 0; }
     .method-tab { min-height: 48px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.04); color: var(--text); font-weight: 900; cursor: pointer; }
     .method-tab.active { border-color: rgba(255,42,47,.65); background: rgba(209,14,23,.18); }
@@ -611,7 +612,7 @@
                   <div class="field"><label for="form-checkout__expirationDate">Validade</label><div id="form-checkout__expirationDate" class="mp-field"></div></div>
                   <div class="field"><label for="form-checkout__securityCode">CVV</label><div id="form-checkout__securityCode" class="mp-field"></div></div>
                 </div>
-                <div class="field-row">
+                <div class="field-row field-row-auto">
                   <div class="field"><label for="form-checkout__issuer">Banco emissor</label><select id="form-checkout__issuer"></select></div>
                   <div class="field"><label for="form-checkout__installments">Parcelas</label><select id="form-checkout__installments"></select></div>
                 </div>

@@ -105,6 +105,14 @@
     checkout.pollingTimer = setTimeout(pollOrder, 1000);
   }
 
+  const MP_FIELD_STYLE = {
+    height: '46px',
+    fontSize: '15px',
+    fontFamily: 'Inter, sans-serif',
+    color: '#f4f1eb',
+    placeholderColor: '#8f8a84'
+  };
+
   async function setupCardForm(order) {
     if (checkout.cardForm) return;
     const cfg = await loadConfig();
@@ -117,9 +125,9 @@
         id: 'card-form',
         cardholderName: { id: 'form-checkout__cardholderName' },
         cardholderEmail: { id: 'form-checkout__cardholderEmail' },
-        cardNumber: { id: 'form-checkout__cardNumber' },
-        expirationDate: { id: 'form-checkout__expirationDate' },
-        securityCode: { id: 'form-checkout__securityCode' },
+        cardNumber: { id: 'form-checkout__cardNumber', style: MP_FIELD_STYLE, placeholder: 'Numero do cartao' },
+        expirationDate: { id: 'form-checkout__expirationDate', style: MP_FIELD_STYLE, placeholder: 'MM/AA' },
+        securityCode: { id: 'form-checkout__securityCode', style: MP_FIELD_STYLE, placeholder: 'CVV' },
         installments: { id: 'form-checkout__installments' },
         identificationType: { id: 'form-checkout__identificationType' },
         identificationNumber: { id: 'form-checkout__identificationNumber' },
