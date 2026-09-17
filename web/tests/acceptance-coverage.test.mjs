@@ -59,6 +59,7 @@ describe('auth route protection safeguards', () => {
   const adminLessonsRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'lessons', 'route.js'), 'utf8');
   const adminLessonDetailRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'lessons', '[id]', 'route.js'), 'utf8');
   const adminSettingsRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'admin', 'settings', 'route.js'), 'utf8');
+  const webhookRoute = fs.readFileSync(path.join(process.cwd(), 'app', 'api', 'mercadopago', 'webhook', 'route.js'), 'utf8');
 
   it('protects every admin/client protected page and sensitive route behind resolveSession', () => {
     expect(adminPage).toContain('resolveSession');
@@ -78,5 +79,9 @@ describe('auth route protection safeguards', () => {
   it('builds magic-link redirects from appBaseUrl, never from request.url\'s origin', () => {
     expect(magicLinkConsumeRoute).toContain('appBaseUrl');
     expect(magicLinkConsumeRoute).not.toContain('redirect(new URL(');
+  });
+
+  it('reads the Mercado Pago webhook secret from settings, not env-only', () => {
+    expect(webhookRoute).toContain('getMercadoPagoSettings');
   });
 });

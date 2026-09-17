@@ -13,7 +13,7 @@ export function getClientIp(request) {
 }
 
 export async function publicOrder(order, attempt) {
-  const accessUrl = order.status === 'paid' ? await getProductAccessUrl() : null;
+  const accessUrl = order.status === 'paid' ? await getProductAccessUrl().catch(() => null) : null;
   return {
     token: order.public_token,
     status: order.status,

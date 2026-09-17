@@ -28,6 +28,7 @@ const ENCRYPTED_KEYS = new Set([
 
 export default function ConfigManager() {
   const [form, setForm] = useState(EMPTY_FORM);
+  const [original, setOriginal] = useState(EMPTY_FORM);
   const [configured, setConfigured] = useState({});
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -42,10 +43,17 @@ export default function ConfigManager() {
       if (ENCRYPTED_KEYS.has(key)) {
         nextConfigured[key] = value?.configured || false;
       } else if (value !== null && value !== undefined) {
-        nextForm[key] = value;
+        if (key === 'smtp_secure') {
+          nextForm[key] = value === 'true' || value === true;
+        } else if (key === 'smtp_port' || key === 'product_amount_cents') {
+          nextForm[key] = Number(value);
+        } else {
+          nextForm[key] = value;
+        }
       }
     }
     setForm(nextForm);
+    setOriginal(nextForm);
     setConfigured(nextConfigured);
   }
 
@@ -61,9 +69,13 @@ export default function ConfigManager() {
     event.preventDefault();
     setError(null);
     setMessage(null);
-    const payload = { ...form };
-    for (const key of ENCRYPTED_KEYS) {
-      if (!payload[key]) delete payload[key];
+    const payload = {};
+    for (const key of Object.keys(EMPTY_FORM)) {
+      if (ENCRYPTED_KEYS.has(key)) {
+        if (form[key]) payload[key] = form[key];
+      } else if (form[key] !== original[key]) {
+        payload[key] = form[key];
+      }
     }
     const response = await fetch('/api/admin/settings', {
       method: 'PATCH',

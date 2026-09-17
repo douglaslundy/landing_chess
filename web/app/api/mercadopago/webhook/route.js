@@ -5,7 +5,7 @@ import { getPayment } from '../../../../lib/mercadopago.js';
 import { applyOfficialPayment } from '../../../../lib/orders.js';
 import { processEmailOutbox } from '../../../../lib/email.js';
 import { verifyMercadoPagoSignature } from '../../../../lib/webhook.js';
-import { optional } from '../../../../lib/env.js';
+import { getMercadoPagoSettings } from '../../../../lib/settings.js';
 
 export async function POST(request) {
   try {
@@ -18,7 +18,7 @@ export async function POST(request) {
     }
     const dataId = url.searchParams.get('data.id') || body.data?.id;
     const type = url.searchParams.get('type') || body.type;
-    const secret = optional('MERCADOPAGO_WEBHOOK_SECRET');
+    const { webhookSecret: secret } = await getMercadoPagoSettings();
 
     const signatureValid = secret ? verifyMercadoPagoSignature({
       xSignature: request.headers.get('x-signature'),
