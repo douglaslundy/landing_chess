@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
-import { publicConfig } from '../../../lib/env.js';
-import { PRODUCT } from '../../../lib/constants.js';
+import { getMercadoPagoSettings, getProductSettings } from '../../../lib/settings.js';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    const [mercadoPago, product] = await Promise.all([
+      getMercadoPagoSettings(),
+      getProductSettings()
+    ]);
     return NextResponse.json({
-      ...publicConfig(),
+      mercadoPagoPublicKey: mercadoPago.publicKey,
       product: {
-        title: PRODUCT.title,
-        amountCents: PRODUCT.amountCents,
-        currency: PRODUCT.currency
+        title: product.title,
+        amountCents: product.amountCents,
+        currency: product.currency
       },
       polling: {
         initialMs: 4000,
